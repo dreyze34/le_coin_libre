@@ -5,8 +5,13 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .form import CustomUserCreationForm
+<<<<<<< HEAD
+from django.contrib.auth import authenticate, login
+from .form import AddProductForm
+=======
 from unidecode import unidecode
 
+>>>>>>> aa799e376b7c3bf92983e4358bc5e6a7126e0ebe
 
 def index(request):
     template = loader.get_template('store/index.html')
@@ -30,6 +35,23 @@ def produit(request):
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 
+#@login_required
+def add_product(request):
+    if request.method == 'POST':
+        form = AddProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            # Associer le produit à l'utilisateur actuel
+            #product.user = request.user
+            date=date.today()
+            product.save()
+            return redirect('index')  # Rediriger vers la page d'accueil ou une autre page
+    else:
+        form = AddProductForm()
+
+    return render(request, 'store/add_product.html', {'form': form})
+
+
 def search(request):
     template = loader.get_template('store/recherche.html')
     search = unidecode(request.GET.get('search')).lower()
@@ -47,15 +69,6 @@ def search(request):
     
     context = {'liste_produit' : resultat, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
-
-
-def add_produit(request):
-
-
-
-
-    template = loader.get_template('store/add_produit.html')
-    return render(request, 'store/add_produit.html')
 
 # def auth(request):
 #     template = loader.get_template('store/authentification.html')
