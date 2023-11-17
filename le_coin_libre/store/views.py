@@ -2,21 +2,26 @@ from django.shortcuts import render, redirect
 from store.models import Product, Image, Category
 from django.template import loader
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .form import CustomUserCreationForm
+<<<<<<< HEAD
 from django.contrib.auth import authenticate, login
 from .form import AddProductForm
+=======
+from unidecode import unidecode
+
+>>>>>>> aa799e376b7c3bf92983e4358bc5e6a7126e0ebe
 
 def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description,}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
-    context = {'liste_produit': ordered_list, 'liste_categories': liste_categories}
+    context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
     return render(request, 'store/index.html', context)
 
 def produit(request):
@@ -49,15 +54,15 @@ def add_product(request):
 
 def search(request):
     template = loader.get_template('store/recherche.html')
-    search = request.GET.get('search')
+    search = unidecode(request.GET.get('search')).lower()
     catégorie = request.GET.get('Catégorie')
     liste_categories = Category.objects.all()
 
-    if Product.objects.filter(title__icontains=search,  category = catégorie).exists() :
-        resultat = Product.objects.filter(title__icontains=search, category = catégorie)
+    if Product.objects.filter(normalized_title__icontains=search,  category = catégorie).exists() :
+        resultat = Product.objects.filter(normalized_title__icontains=search,  category = catégorie)
 
-    elif Product.objects.filter(title__icontains=search).exists() and int(catégorie) == 0 :
-        resultat = Product.objects.filter(title__icontains=search)
+    elif Product.objects.filter(normalized_title__icontains=search).exists() and int(catégorie) == 0 :
+        resultat = Product.objects.filter(normalized_title__icontains=search)
        
     else :
         resultat = []
