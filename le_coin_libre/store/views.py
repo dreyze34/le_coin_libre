@@ -12,7 +12,7 @@ def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description, 'image':Image.objects.get(product=ordered_list[i]).image}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
