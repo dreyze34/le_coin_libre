@@ -14,18 +14,17 @@ class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
 
 class Product(models.Model):
-    id = models.CharField(max_length=300, unique=True, primary_key=True)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=date.today)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
-    def normalized_title(self):
-        return unidecode(self.title).lower()
+    normalized_title=models.CharField(max_length=200, default="default")
+    def save(self, *args, **kwargs):
+        self.normalized_title = unidecode(self.title).lower()
+        super().save(*args, **kwargs)
     
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    
-    

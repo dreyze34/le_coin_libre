@@ -5,6 +5,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .form import CustomUserCreationForm
+from django.contrib.auth import authenticate, login
+from .form import AddProductForm
 from unidecode import unidecode
 
 
@@ -13,7 +15,6 @@ def index(request):
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
         {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description}
-        #Image.objects.get(product=ordered_list[i]).image
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
@@ -30,6 +31,23 @@ def produit(request):
     ] 
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
+
+#@login_required
+def add_product(request):
+    if request.method == 'POST':
+        form = AddProductForm(request.POST)
+        if form.is_valid():
+            product = form.save(commit=False)
+            # Associer le produit à l'utilisateur actuel
+            #product.user = request.user
+            date=date.today()
+            product.save()
+            return redirect('index')  # Rediriger vers la page d'accueil ou une autre page
+    else:
+        form = AddProductForm()
+
+    return render(request, 'store/add_product.html', {'form': form})
+
 
 def search(request):
     template = loader.get_template('store/recherche.html')
@@ -48,15 +66,6 @@ def search(request):
     
     context = {'liste_produit' : resultat, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
-
-
-def add_produit(request):
-
-
-
-
-    template = loader.get_template('store/add_produit.html')
-    return render(request, 'store/add_produit.html')
 
 # def auth(request):
 #     template = loader.get_template('store/authentification.html')
