@@ -5,13 +5,10 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .form import CustomUserCreationForm
-<<<<<<< HEAD
 from django.contrib.auth import authenticate, login
 from .form import AddProductForm
-=======
 from unidecode import unidecode
 
->>>>>>> aa799e376b7c3bf92983e4358bc5e6a7126e0ebe
 
 def index(request):
     template = loader.get_template('store/index.html')
