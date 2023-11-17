@@ -1,0 +1,38 @@
+{% load static %}
+{%include 'store/header.html'%}
+   
+        
+         <!-- construction d'une barre de recherche -->
+
+         <form class="Recherche_form" id="search">
+            <input type="text" id="search" name="search" placeholder="Entrez votre recherche">
+            <select id="categorie" name="Catégorie">
+                <option value="0"> Catégorie </option>
+                {% for categorie in liste_categories %}
+                <option value="{{ categorie.id }}"> {{ categorie.name }} </option>
+                {% endfor %}
+            </select>
+            <button class="rechercher" type="submit" value="Rechercher" href="recherche.html">
+        </form>
+
+
+        <!-- construction des résultats de la recherche-->
+
+        {% for produit in liste_produit %}
+        <div class="bloc_produit">
+            <div class="photo_produit">
+                <img src= '{{produit.image}}'>
+            </div>
+            <div class="description_produit">
+
+                <h1> {{ produit.title }} </h1>
+                <h2 class="prix"> {{ produit.price }} € </h2>
+
+                <p class="description"> {{ produit.description }} </p>
+            </div>
+        </div>
+        {% endfor %}
+
+
+   
+ {%include 'store/footer.html'%}

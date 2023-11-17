@@ -1,0 +1,33 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Le Coin Libre </title>
+        <link href="{% static 'styles.css' %}" rel="stylesheet" type="text/css" >
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Roboto&display=swap" rel="stylesheet">
+
+    </head>
+    <body>
+        <header>
+            <h1 class="titre"> Le Coin Libre </h1>
+            <nav>
+                <div class="bouton_accueil">
+                    <a href = "../"> Accueil </a>
+                    
+                </div>
+                <div class="bouton_accueil">
+                    <a href = "../auth"> Connexion </a> 
+                </div> 
+                
+                <div class="bouton_accueil">
+                    <a href = "../add_product"> Faire un dépot </a>
+                </div>
+        
+                <div class="bouton_accueil">
+                    <a href = "../a_propos"> A propos </a>
+                </div>
+                
+            </nav>
+        </header>
