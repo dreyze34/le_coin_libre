@@ -14,7 +14,6 @@ class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
 
 class Product(models.Model):
-    id = models.CharField(max_length=300, unique=True, primary_key=True)
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=10, decimal_places=2)
