@@ -12,6 +12,10 @@ class UserProfile(models.Model):
     
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
+    normalized_name=models.CharField(max_length=200, default="default")
+    def save(self, *args, **kwargs):
+        self.normalized_name = unidecode(self.name).lower()
+        super().save(*args, **kwargs)
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
