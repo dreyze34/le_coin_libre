@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
 from store.models import Product, Image, Category
 from django.template import loader
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm 
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from .form import CustomUserCreationForm
-from django.contrib.auth import authenticate, login
+from .form import CustomUserCreationForm, CustomAuthenticationForm
+from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
 from unidecode import unidecode
 
@@ -90,24 +90,27 @@ def search(request):
 
 #     return render(request, 'auth.html', {'form': form})
 
+#mathis.b@orange.fr
+#bonjour123
+#il faudra ajouter la vérification des mails centrale supélec 
 def auth(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data['email']
             password = form.cleaned_data['password1']
+            
+            # Définissez le champ 'username' avec la valeur de l'email
             form.instance.username = email
-            user = authenticate(request, username=email,email=email, password=password)
-            # if user is not None:
-            #     login(request, user)
-            #     messages.success(request, 'Connexion réussie.')
-            #     messages.error(request, 'Identifiant ou mot de passe incorrect.')
-            #     return redirect('index')
-            # else:
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Inscription réussie.')
-            return redirect('index')  # Redirigez vers la page d'accueil ou toute autre page souhaitée
+            
+            user = authenticate(request, username=email, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else :
+                user = form.save()
+                login(request, user)
+                return redirect('index')
                 
     else:
         form = CustomUserCreationForm()
@@ -117,3 +120,31 @@ def auth(request):
 def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
+
+
+def disconnect(request):
+    logout(request)
+    redirect('index')
+    return redirect('index')
+
+def connect(request): 
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            
+            # Définissez le champ 'username' avec la valeur de l'email
+            form.username = email
+            
+            user = authenticate(request, username=email, email=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else :
+                messages.error(request, 'Identifiant ou mot de passe incorrect.')
+                
+    else:
+        form = CustomAuthenticationForm(request.POST)
+    
+    return render(request, 'store/authentification.html', {'form': form}) 

@@ -11,6 +11,9 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = ['email', 'password1', 'password2']
     
+class CustomAuthenticationForm(forms.Form):
+    email = forms.EmailField(label="Adresse mail")
+    password = forms.CharField(label="Mot de passe", widget=forms.PasswordInput)
 class AddProductForm(forms.ModelForm):
     title = forms.CharField(label="Titre")
     description = forms.CharField(label="Description")  # Correction de la faute de frappe ici

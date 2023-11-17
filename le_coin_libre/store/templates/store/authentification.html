@@ -12,7 +12,25 @@
     </ul>
 {% endif %}
 
-<form class='auth' method="post" action="{% url 'auth' %}"> 
+{% if in_auth_view %}
+    <form class='auth' method="post" action="{% url 'auth' %}"> 
+        <div class="formulaire_auth">
+            
+            <!-- csrf_token est une protection contre les attaques CSRF (Cross-Site Request Forgery) -->
+            {% csrf_token %} 
+            <!--as_p permet de générer un formulaire HTML avec une balise <p> pour chaque champ-->
+            {{ form.as_p }}
+           
+            <button type="submit">S'inscrire</button>
+        </div>
+    </form>
+
+
+{% elif request.user.is_authenticated %}
+<!-- afficher ici le compte utilisateur du connecté -->
+
+{%else%}
+<form class='auth' method="post" action="{% url 'connect' %}"> 
     <div class="formulaire_auth">
         
         <!-- csrf_token est une protection contre les attaques CSRF (Cross-Site Request Forgery) -->
@@ -20,9 +38,14 @@
         <!--as_p permet de générer un formulaire HTML avec une balise <p> pour chaque champ-->
         {{ form.as_p }}
        
-        <button type="submit">Se connecter/S'inscrire</button>
+        <button type="submit">Se connecter</button>
     </div>
-
 </form>
+
+<a href="{% url 'auth' %}">Pas encore inscrit ?</a>
+{%endif%}
+
+
+
 {% endblock %}
 {%include 'store/footer.html'%}

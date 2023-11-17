@@ -6,10 +6,6 @@ from unidecode import unidecode
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # mail = models.EmailField(max_length=300, unique=True)
-    # password = models.CharField(max_length=200)
-    # phone = models.CharField(max_length=10)
-    
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
 
