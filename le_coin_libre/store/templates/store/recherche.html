@@ -4,7 +4,7 @@
         
          <!-- construction d'une barre de recherche -->
 
-         <form class="Recherche_form" id="search">
+         <form class="Recherche_form" id="search" action="{%url 'search' %}">
             <input type="text" id="search" name="search" placeholder="Entrez votre recherche">
             <select id="categorie" name="Catégorie">
                 <option value="0"> Catégorie </option>
@@ -12,7 +12,7 @@
                 <option value="{{ categorie.id }}"> {{ categorie.name }} </option>
                 {% endfor %}
             </select>
-            <button class="rechercher" type="submit" value="Rechercher" href="recherche.html">
+            <input class="rechercher" type="submit" value="Rechercher">
         </form>
 
 
