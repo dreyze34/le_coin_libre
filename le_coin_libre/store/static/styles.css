@@ -28,6 +28,11 @@ footer{
     font-family: 'Vina Sans', sans-serif;
     color : white;
     text-align: center;
+    bottom: 0;
+    width: 100%;
+    flex: 1;
+    padding: 5px;
+    margin-bottom: 0;
 }
 
 nav {
