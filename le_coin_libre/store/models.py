@@ -20,8 +20,10 @@ class Product(models.Model):
     date = models.DateField(default=date.today)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
-    def normalized_title(self):
-        return unidecode(self.title).lower()
+    normalized_title=models.CharField(max_length=200, default="default")
+    def save(self, *args, **kwargs):
+        self.normalized_title = unidecode(self.title).lower()
+        super().save(*args, **kwargs)
     
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')

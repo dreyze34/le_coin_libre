@@ -3,3 +3,17 @@
     
 {%include 'store/footer.html'%}
 
+<div class="bloc_produit">
+    <div class="photo_produit">
+        {% for img in produit.image%}
+        <img src= '{img}'>
+        {%endfor%}
+    </div>
+    <div class="description_produit">
+        <h1> {{ produit.title }} </h1>
+        <h2 class="utilisateur">{{produit.user}}</h2>
+        <h3 class="prix"> {{ produit.price }} € </h3>
+        <p class="description"> {{ produit.description }} </p>
+        <p class="date">{{produit.date}}</p>
+    </div>
+</div>
