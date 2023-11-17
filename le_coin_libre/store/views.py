@@ -7,15 +7,16 @@ from django.contrib import messages
 from .form import CustomUserCreationForm
 from django.contrib.auth import authenticate, login
 
+
 def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description,}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description, 'image':Image.objects.get(product=ordered_list[i]).image}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
-    context = {'liste_produit': ordered_list, 'liste_categories': liste_categories}
+    context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
     return render(request, 'store/index.html', context)
 
 def produit(request):
