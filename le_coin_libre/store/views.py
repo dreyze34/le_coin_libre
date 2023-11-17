@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
-from store.models import Product, Image, Category
+from store.models import Product, Image, Category, UserProfile
 from django.template import loader
-from django.contrib.auth.forms import UserCreationForm 
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from .form import CustomUserCreationForm, CustomAuthenticationForm
@@ -14,7 +14,7 @@ def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description, 'image': Image.objects.values_list('image', flat=True).filter(product= ordered_list[i])[0]}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
@@ -32,21 +32,26 @@ def produit(request):
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 
-#@login_required
 def add_product(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST)
         if form.is_valid():
-            product = form.save(commit=False)
-            # Associer le produit à l'utilisateur actuel
-            #product.user = request.user
-            date=date.today()
-            product.save()
-            return redirect('index')  # Rediriger vers la page d'accueil ou une autre page
+            if request.user.is_authenticated:
+                
+                product = form.save(commit=False)
+                # Associer le produit à l'utilisateur actuel
+                product.user = request.user
+                product.save()
+                photos = request.FILES.getlist('photos') 
+                for photo in photos:
+                    Image.objects.create(image=photo, product=product)
+                return redirect('index')
+            else:
+                return redirect('connect')
     else:
         form = AddProductForm()
 
-    return render(request, 'store/add_product.html', {'form': form})
+    return render(request, 'store/add_produit.html', {'form': form})
 
 
 def search(request):
@@ -67,32 +72,9 @@ def search(request):
     context = {'liste_produit' : resultat, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
 
-# def auth(request):
-#     template = loader.get_template('store/authentification.html')
-#     return render(request, 'store/authentification.html')
-
-# def auth(request):
-#     if request.method == 'POST':
-#         form = CustomAuthenticationForm(request, data=request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             user = authenticate(request, username=username, password=password)
-
-#             if user is not None:
-#                 login(request, user)
-#                 messages.success(request, 'Connexion réussie.')
-#                 return redirect('index')  # Redirigez vers la page d'accueil ou toute autre page souhaitée
-#             else:
-#                 messages.error(request, 'Identifiant ou mot de passe incorrect.')
-#     else:
-#         form = CustomAuthenticationForm()
-
-#     return render(request, 'auth.html', {'form': form})
-
 #mathis.b@orange.fr
 #bonjour123
-#il faudra ajouter la vérification des mails centrale supélec 
+#il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
@@ -103,14 +85,10 @@ def auth(request):
             # Définissez le champ 'username' avec la valeur de l'email
             form.instance.username = email
             
-            user = authenticate(request, username=email, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('index')
-            else :
-                user = form.save()
-                login(request, user)
-                return redirect('index')
+            user = form.save()
+            UserProfile.objects.create(user=user)
+            login(request, user)
+            return redirect('index')
                 
     else:
         form = CustomUserCreationForm()
@@ -137,7 +115,7 @@ def connect(request):
             # Définissez le champ 'username' avec la valeur de l'email
             form.username = email
             
-            user = authenticate(request, username=email, email=email, password=password)
+            user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('index')

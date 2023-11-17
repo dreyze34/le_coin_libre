@@ -20,6 +20,8 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.normalized_title = unidecode(self.title).lower()
         super().save(*args, **kwargs)
+        if not Image.objects.filter(product=self).exists():
+            Image.objects.create(product=self, image='static/images/No-img.jpg')
     
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')
