@@ -19,7 +19,7 @@ class Product(models.Model):
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(default=date.today)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
     def normalized_title(self):
         return unidecode(self.title).lower()
