@@ -23,21 +23,25 @@ def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description, 'image': Image.objects.values_list('image', flat=True).filter(product= ordered_list[i])[0]}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 
+        'description':ordered_list[i].description, 
+        'image': Image.objects.values_list('image', flat=True).filter(product= ordered_list[i])[0],
+        'id':ordered_list[i].id,}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
     context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
     return render(request, 'store/index.html', context)
 
-def produit(request):
+def produit(request, id):
     template = loader.get_template('store/produit.html')
-    product_list = Product.objects.all()
-    liste_produit = [
-        {'nom':product_list[i].title, 'prix':product_list[i].price, 'description':product_list[i].description,
-         'image': Image.objects.filter(product= product_list[i])[0].image}
-        for i in range(len(product_list))
-    ] 
+    product = Product.objects.get(id=id)
+    liste_produit = {
+        'nom':product.title,
+        'prix':product.price, 
+        'description':product.description,
+        'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))]
+        }
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 

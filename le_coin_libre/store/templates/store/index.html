@@ -23,7 +23,9 @@
                 <img src="{{ produit.image}}" style="width: 300px;">
             </div>
             <div class="description_produit">
-                <h1>{{ produit.nom }}</h1>
+                <a href='/produit/{{produit.id}}'>
+                    <h1>{{ produit.nom }}</h1>
+                </a>
                 <h2 class="prix">{{ produit.prix }} €</h2>
                 <p class="description">{{ produit.description }}</p>
             </div>

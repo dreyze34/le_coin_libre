@@ -1,24 +1,18 @@
 {% load static %}
 {%include 'store/header.html'%}
-    
-{%include 'store/footer.html'%}
-
-<script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('product');
-</script>
 
 <div class="bloc_produit">
     <div class="photo_produit">
-        {% for img in liste_produit[productId].image%}
-        <img src= '{img}'>
+    {% for img in liste_produit.image%}
+        <img src= '../{{img}}'>
         {%endfor%}
     </div>
     <div class="description_produit">
-        <h1> {{ liste_produit[productId].title }} </h1>
-        <h2 class="utilisateur">{{liste_produit[productId].user}}</h2>
-        <h3 class="prix"> {{ liste_produit[productId].price }} € </h3>
-        <p class="description"> {{ liste_produit[productId].description }} </p>
-        <p class="date">{{liste_produit[productId].date}}</p>
+        <h1> {{ liste_produit.nom }} </h1>
+        <h3 class="prix"> {{ liste_produit.prix }} € </h3>
+        <p class="description"> {{ liste_produit.description }} </p>
+        <p class="date">{{liste_produit.date}}</p>
     </div>
 </div>
+
+{%include 'store/footer.html'%}

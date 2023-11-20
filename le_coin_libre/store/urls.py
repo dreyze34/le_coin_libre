@@ -7,7 +7,7 @@ urlpatterns = [
     path('add_product/', views.add_product, name='add_product'),
     path('auth/',views.auth, name ='auth'),
     path('a_propos/',views.a_propos, name ='a_propos'),
-    path('produit/', views.produit, name= 'produit'),
+    path('produit/<int:id>', views.produit, name= 'produit'),
     path('disconnect/', views.disconnect, name='disconnect'),
     path("connect/", views.connect, name='connect')
 ]
