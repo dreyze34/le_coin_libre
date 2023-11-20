@@ -1,6 +1,46 @@
 from django.db import models
 from datetime import date
-from unidecode import unidecode
+from django.db import models
+from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, phone_number, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, phone_number=phone_number, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, email, phone_number, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(email, phone_number, password, **extra_fields)
+
+class CustomUser(AbstractUser):
+    email = models.EmailField(unique=True)
+    phone_number = models.CharField(max_length=15, unique=True)
+
+    objects = CustomUserManager()
+
+    # Ajoutez ces lignes pour résoudre le conflit
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='customuser_set',
+        related_query_name='customuser',
+        blank=True,
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='customuser_set',
+        related_query_name='customuser',
+        blank=True,
+        verbose_name='user permissions',
+        help_text='Specific permissions for this user.',
+    )
 
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)

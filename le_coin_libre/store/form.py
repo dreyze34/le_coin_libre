@@ -1,6 +1,27 @@
 from django import forms
 from .models import Product, Category
 from django.forms.widgets import ClearableFileInput
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from .models import CustomUser
+
+# forms.py
+from django import forms
+from django.contrib.auth.forms import AuthenticationForm
+
+class CustomAuthenticationForm(AuthenticationForm):
+    email = forms.EmailField()
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'password']
+
+
+class CustomUserCreationForm(UserCreationForm):
+     email = forms.EmailField()
+     phone_number = forms.CharField(max_length=15, required=False)
+     class Meta:
+        model = CustomUser
+        fields = ['email', 'phone_number']
 
 
 

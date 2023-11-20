@@ -1,10 +1,13 @@
 from django.shortcuts import render, redirect
 from store.models import Product, Image, Category
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.forms import AuthenticationForm
+from .form import CustomUserCreationForm
 from django.template import loader
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-from .form import AddProductForm
+from .form import AddProductForm, CustomAuthenticationForm
 import os
 import hashlib
 
@@ -125,4 +128,56 @@ def disconnect(request):
     redirect('index')
     return redirect('index')
 
+def a_propos(request):
+    template = loader.get_template('store/a_propos.html')
+    return render(request, 'store/a_propos.html')
 
+def register(request):
+    if request.method == 'POST':
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            
+            user = form.save()
+            login(request, user)
+            return redirect('index')  # Remplacez 'home' par le nom de votre vue d'accueil
+    else:
+        form = CustomUserCreationForm()
+    return render(request, 'store/register.html', {'form': form})
+
+# def user_login(request):
+#     if request.method == 'POST':
+#         form = AuthenticationForm(request, data=request.POST)
+#         if form.is_valid():
+#             user = form.get_user()
+#             login(request, user)
+#             return redirect('index')  # Remplacez 'home' par le nom de votre vue d'accueil
+#     else:
+#         form = AuthenticationForm()
+#     return render(request, 'store/login.html', {'form': form})
+
+
+
+def user_login(request):
+    print("a")
+    if request.method == 'POST':
+        print("b")
+        form = CustomAuthenticationForm(request, data=request.POST)
+        print("c")
+        print(form.errors)
+        print(form.data)
+        if form.is_valid():
+            print("d")
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=email, password=password)
+            print("e")
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else:
+                # Utilisateur non authentifié - Gérer cela selon vos besoins
+                print('Adresse e-mail ou mot de passe incorrect.')
+    else:
+        form = CustomAuthenticationForm()
+
+    return render(request, 'store/login.html', {'form': form})
