@@ -53,7 +53,8 @@ def add_product(request):
                 product.save()
                 photos = request.FILES.getlist('photos') 
                 for photo in photos:
-                    Image.objects.create(image=photo, product=product)
+                    img = Image.objects.create(image=photo, product=product)
+                    img.save()
                 return redirect('index')
             else:
                 return redirect('connect')
@@ -66,19 +67,30 @@ def add_product(request):
 def search(request):
     template = loader.get_template('store/recherche.html')
     search = unidecode(request.GET.get('search')).lower()
-    catégorie = request.GET.get('Categorie')
+    catégorie = request.GET.get('Catégorie')
     liste_categories = Category.objects.all()
 
     if Product.objects.filter(normalized_title__icontains=search,  category = catégorie).exists() :
         resultat = Product.objects.filter(normalized_title__icontains=search,  category = catégorie)
+        liste_produit = liste_produit = [
+        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        for i in range(len(resultat))
+        ]
+        print(resultat[0].image_set.all()[0].image)
+         
 
     elif Product.objects.filter(normalized_title__icontains=search).exists() and int(catégorie) == 0 :
         resultat = Product.objects.filter(normalized_title__icontains=search)
+        liste_produit = liste_produit = [
+        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        for i in range(len(resultat))
+        ]
+        print(resultat[0].image_set.all()[0].image)
        
     else :
-        resultat = []
+        liste_produit = []
     
-    context = {'liste_produit' : resultat, 'liste_categories' : liste_categories}
+    context = {'liste_produit' : liste_produit, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
 
 #mathis.b@orange.fr

@@ -21,11 +21,11 @@
         {% for produit in liste_produit %}
         <div class="bloc_produit">
             <div class="photo_produit">
-                <img src= '{{produit.image}}'>
+                <img src= '../{{produit.image}}'>
             </div>
             <div class="description_produit">
 
-                <h1> {{ produit.title }} </h1>
+                <h1> {{ produit.nom }} </h1>
                 <h2 class="prix"> {{ produit.prix }} € </h2>
 
                 <p class="description"> {{ produit.description }} </p>
