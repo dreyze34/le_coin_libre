@@ -3,6 +3,7 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Product, Category
 from django.forms.widgets import ClearableFileInput
+from multiupload.fields import MultiFileField
 
 
 #formulaire de création d'un utilisateur
@@ -25,7 +26,7 @@ class AddProductForm(forms.ModelForm):
     description = forms.CharField(label="Description")  # Correction de la faute de frappe ici
     price = forms.DecimalField(label="Prix")
     category = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label="Catégorie")
-    photos = forms.FileField(label="Photos", required=False, widget=forms.ClearableFileInput())
+    photos = MultiFileField(label="photos", required=False, min_num=0, max_num=10, max_file_size=1024*1024*5)
     
     class Meta:
         model = Product

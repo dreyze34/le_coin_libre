@@ -5,7 +5,7 @@
 
 <div class="bloc_produit">
     <div class="photo_produit">
-        <img id="image" src= '../{{liste_produit.image.0}}' alt="Image" style="width: 400px; height: 300px;">
+        <img id="image" src= '../static/images/{{liste_produit.id}}/image1.jpg' alt="Image" style="width: 400px; height: 300px;">
         <center>
             <button id="changeButtonMoins" onclick="changeImageMoins()">&larr;</button>
             <button id="changeButtonPlus" onclick="changeImagePlus()">&rarr;</button>
@@ -30,7 +30,7 @@
         }
         
         const imageElement = document.getElementById('image');
-        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+        imageElement.src = `../static/images/{{liste_produit.id}}/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
     }
 
     function changeImageMoins() {
@@ -40,7 +40,7 @@
         }
         
         const imageElement = document.getElementById('image');
-        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+        imageElement.src = `../static/images/{{liste_produit.id}}/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
     }
 </script>
 

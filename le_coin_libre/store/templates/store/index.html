@@ -20,7 +20,7 @@
         {% for produit in liste_produit %}
     <div class="bloc_produit">
             <div class="photo_produit">
-                <img src="{{ produit.image}}" style="width: 300px;">
+                <img src='../static/images/{{produit.id}}/image1.jpg' style="width: 300px;">
             </div>
             <div class="description_produit">
                 <a href='/produit/{{produit.id}}'>
