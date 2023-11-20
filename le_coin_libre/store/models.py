@@ -6,10 +6,6 @@ from unidecode import unidecode
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # mail = models.EmailField(max_length=300, unique=True)
-    # password = models.CharField(max_length=200)
-    # phone = models.CharField(max_length=10)
-    
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
     normalized_name=models.CharField(max_length=200, default="default")
@@ -28,6 +24,8 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         self.normalized_title = unidecode(self.title).lower()
         super().save(*args, **kwargs)
+        if not Image.objects.filter(product=self).exists():
+            Image.objects.create(product=self, image='static/images/No-img.jpg')
     
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')

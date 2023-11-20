@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html>
     <head>
+        
         <title> Le Coin Libre </title>
         <link href="{% static 'styles.css' %}" rel="stylesheet" type="text/css" >
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,9 +18,15 @@
                     <a href = "../"> Accueil </a>
                     
                 </div>
+                {% if request.user.is_authenticated %}
                 <div class="bouton_accueil">
-                    <a href = "../auth"> Connexion </a> 
+                    <a href = "../disconnect"> Déconnexion </a> 
                 </div> 
+                {%else%}
+                <div class="bouton_accueil">
+                    <a href = "../connect"> Connexion </a> 
+                </div>  
+                {%endif%}
                 
                 <div class="bouton_accueil">
                     <a href = "../add_product"> Faire un dépot </a>

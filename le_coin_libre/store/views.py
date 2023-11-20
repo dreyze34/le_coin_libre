@@ -1,20 +1,29 @@
 from django.shortcuts import render, redirect
-from store.models import Product, Image, Category
+from store.models import Product, Image, Category, UserProfile
 from django.template import loader
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from .form import CustomUserCreationForm
-from django.contrib.auth import authenticate, login
+from .form import CustomUserCreationForm, CustomAuthenticationForm
+from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
 from unidecode import unidecode
+import hashlib
 
+def generer_chiffre_aleatoire_unique(string):
+    # Utiliser SHA-256 pour créer un hachage unique
+    hachage = hashlib.sha256(string.encode()).hexdigest()
+
+    # Convertir le hachage en un nombre entier
+    chiffre_aleatoire = int(hachage, 16)
+
+    return chiffre_aleatoire
 
 def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
     liste_produit = [
-        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description}
+        {'nom':ordered_list[i].title, 'prix':ordered_list[i].price, 'description':ordered_list[i].description, 'image': Image.objects.values_list('image', flat=True).filter(product= ordered_list[i])[0]}
         for i in range(len(ordered_list))
     ] 
     liste_categories = Category.objects.all()
@@ -32,27 +41,32 @@ def produit(request):
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 
-#@login_required
 def add_product(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST)
         if form.is_valid():
-            product = form.save(commit=False)
-            # Associer le produit à l'utilisateur actuel
-            #product.user = request.user
-            date=date.today()
-            product.save()
-            return redirect('index')  # Rediriger vers la page d'accueil ou une autre page
+            if request.user.is_authenticated:
+                
+                product = form.save(commit=False)
+                # Associer le produit à l'utilisateur actuel
+                product.user = request.user
+                product.save()
+                photos = request.FILES.getlist('photos') 
+                for photo in photos:
+                    Image.objects.create(image=photo, product=product)
+                return redirect('index')
+            else:
+                return redirect('connect')
     else:
         form = AddProductForm()
 
-    return render(request, 'store/add_product.html', {'form': form})
+    return render(request, 'store/add_produit.html', {'form': form})
 
 
 def search(request):
     template = loader.get_template('store/recherche.html')
     search = unidecode(request.GET.get('search')).lower()
-    catégorie = request.GET.get('Catégorie')
+    catégorie = request.GET.get('Categorie')
     liste_categories = Category.objects.all()
 
     if Product.objects.filter(normalized_title__icontains=search,  category = catégorie).exists() :
@@ -67,53 +81,54 @@ def search(request):
     context = {'liste_produit' : resultat, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
 
-# def auth(request):
-#     template = loader.get_template('store/authentification.html')
-#     return render(request, 'store/authentification.html')
-
-# def auth(request):
-#     if request.method == 'POST':
-#         form = CustomAuthenticationForm(request, data=request.POST)
-#         if form.is_valid():
-#             username = form.cleaned_data['username']
-#             password = form.cleaned_data['password']
-#             user = authenticate(request, username=username, password=password)
-
-#             if user is not None:
-#                 login(request, user)
-#                 messages.success(request, 'Connexion réussie.')
-#                 return redirect('index')  # Redirigez vers la page d'accueil ou toute autre page souhaitée
-#             else:
-#                 messages.error(request, 'Identifiant ou mot de passe incorrect.')
-#     else:
-#         form = CustomAuthenticationForm()
-
-#     return render(request, 'auth.html', {'form': form})
-
+#mathis.b@orange.fr
+#bonjour123
+#il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password1']
-            form.instance.username = email
-            user = authenticate(request, username=email,email=email, password=password)
-            # if user is not None:
-            #     login(request, user)
-            #     messages.success(request, 'Connexion réussie.')
-            #     messages.error(request, 'Identifiant ou mot de passe incorrect.')
-            #     return redirect('index')
-            # else:
-            user = form.save()
-            login(request, user)
-            messages.success(request, 'Inscription réussie.')
-            return redirect('index')  # Redirigez vers la page d'accueil ou toute autre page souhaitée
+    
+    print("post")
+    form = CustomUserCreationForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password1']
+        user = form.save()
+        user.id = generer_chiffre_aleatoire_unique(email)
+        user.save()
+        UserProfile.objects.create(user=user)
+        login(request, user)
+        return redirect('index')
                 
-    else:
-        form = CustomUserCreationForm()
+    
 
     return render(request, 'store/authentification.html', {'form': form})
 
 def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
+
+
+def disconnect(request):
+    logout(request)
+    redirect('index')
+    return redirect('index')
+
+def connect(request): 
+    if request.method == 'POST':
+        form = CustomAuthenticationForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            
+            # Définissez le champ 'username' avec la valeur de l'email
+            
+            user = authenticate(request, username=email, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+            else :
+                messages.error(request, 'Identifiant ou mot de passe incorrect.')
+                
+    else:
+        form = CustomAuthenticationForm(request.POST)
+    
+    return render(request, 'store/authentification.html', {'form': form}) 
