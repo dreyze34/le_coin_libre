@@ -2,20 +2,10 @@ from django.shortcuts import render, redirect
 from store.models import Product, Image, Category
 from django.template import loader
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .form import AddProductForm
 import os
-import hashlib
-
-def generer_chiffre_aleatoire_unique(string):
-    # Utiliser SHA-256 pour créer un hachage unique
-    hachage = hashlib.sha256(string.encode()).hexdigest()
-
-    # Convertir le hachage en un nombre entier
-    chiffre_aleatoire = int(hachage, 16)
-
-    return chiffre_aleatoire
 
 def index(request):
     template = loader.get_template('store/index.html')
@@ -116,16 +106,16 @@ def search(request):
     context = {'liste_produit' : liste_produit, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
 
-#mathis.b@orange.fr
-#bonjour123
-#il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
+
 
 def disconnect(request):
     logout(request)
     redirect('index')
     return redirect('index')
 
-
+#mathis.b@orange.fr
+#bonjour123
+#il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
     form= UserCreationForm()
     if request.method == 'POST':
