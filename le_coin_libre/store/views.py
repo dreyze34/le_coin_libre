@@ -147,10 +147,10 @@ def connect(request):
     return render(request, 'store/authentification.html', {'form': form}) 
 
 #def user_profile(request):
-@login_required   
+ 
 def user_profile(request):
     try:
-        user_data = UserProfile.objects.get(email=request.email)
+        user_data = UserProfile.objects.get(user=request.user)
         product_data = user_data.get_user_products()
         image_data = Image.objects.filter(product__in=product_data)
         context = {'user_data': user_data, 'product_data': product_data, 'image_data': image_data}
