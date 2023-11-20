@@ -8,6 +8,7 @@ from .form import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
 from unidecode import unidecode
+import os
 import hashlib
 
 def generer_chiffre_aleatoire_unique(string):
@@ -47,20 +48,40 @@ def produit(request, id):
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 
+def handle_uploaded_file(file, i, product_id):
+    destination_folder = f'./static/images/{product_id}'
+
+    os.makedirs(destination_folder, exist_ok=True)
+
+    original_filename, file_extension = os.path.splitext(file.name)
+    filename = f'image{i}' + file_extension
+
+    destination_path = os.path.join(destination_folder, filename)
+
+    with open(destination_path, 'wb+') as destination :
+        for chunk in file.chunks():
+            destination.write(chunk)
+    destination.close()
+
 def add_product(request):
     if request.method == 'POST':
         form = AddProductForm(request.POST)
         if form.is_valid():
-            if request.user.is_authenticated:
-                
+            if request.user.is_authenticated:                
                 product = form.save(commit=False)
                 # Associer le produit à l'utilisateur actuel
                 product.user = request.user
                 product.save()
-                photos = request.FILES.getlist('photos') 
-                for photo in photos:
-                    img = Image.objects.create(image=photo, product=product)
+                product_id = product.id
+                list_photos = request.FILES.getlist('photos')
+
+                for i in range(len(list_photos)):
+                    handle_uploaded_file(list_photos[i], i, product_id)
+
+                for i in range(len(list_photos)):
+                    img = Image.objects.create(image=f'./static/images/{product_id}/image{i}', product=product)
                     img.save()
+
                 return redirect('index')
             else:
                 return redirect('connect')
@@ -68,7 +89,6 @@ def add_product(request):
         form = AddProductForm()
 
     return render(request, 'store/add_produit.html', {'form': form})
-
 
 def search(request):
     template = loader.get_template('store/recherche.html')
@@ -149,4 +169,6 @@ def connect(request):
     else:
         form = CustomAuthenticationForm(request.POST)
     
-    return render(request, 'store/authentification.html', {'form': form}) 
+    return render(request, 'store/authentification.html', {'form': form})
+
+
