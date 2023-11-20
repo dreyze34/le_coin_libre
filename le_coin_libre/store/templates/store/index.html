@@ -18,20 +18,19 @@
 
         <!-- construction d'un bloc produit à itérer --> 
 
-        {% for produit in liste_produit %}
-        <div class="bloc_produit">
-            <div class="photo_produit">
-                <img src= '{{produit.image}}'>
-            </div>
-            <div class="description_produit">
+         <!-- construction d'un bloc produit à itérer --> 
 
-                <h1> {{ produit.nom }} </h1>
-                <h2 class="prix"> {{ produit.prix }} € </h2>
-
-                <p class="description"> {{ produit.description }} </p>
-            </div>
-        </div>
-        {% endfor %}
-
+         {% for produit in liste_produit %}
+         <div class="bloc_produit">
+             <div class="photo_produit">
+                 <img src="{{ produit.image }}" style="width: 300px;">
+             </div>
+             <div class="description_produit">
+                 <h1>{{ produit.nom }}</h1>
+                 <h2 class="prix">{{ produit.prix }} €</h2>
+                 <p class="description">{{ produit.description }}</p>
+             </div>
+         </div>
+     {% endfor %}
  
 {%include 'store/footer.html' %}
