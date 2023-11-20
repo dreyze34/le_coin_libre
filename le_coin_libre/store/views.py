@@ -1,13 +1,10 @@
 from django.shortcuts import render, redirect
-from store.models import Product, Image, Category, UserProfile
+from store.models import Product, Image, Category
 from django.template import loader
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login, authenticate
 from django.contrib import messages
-from .form import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
-from unidecode import unidecode
 import os
 import hashlib
 
@@ -122,53 +119,10 @@ def search(request):
 #mathis.b@orange.fr
 #bonjour123
 #il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
-def auth(request):
-    
-    print("post")
-    form = CustomUserCreationForm(request.POST)
-    if form.is_valid():
-        email = form.cleaned_data['email']
-        password = form.cleaned_data['password1']
-        user = form.save()
-        user.id = generer_chiffre_aleatoire_unique(email)
-        user.save()
-        UserProfile.objects.create(user=user)
-        login(request, user)
-        return redirect('index')
-                
-    
-
-    return render(request, 'store/authentification.html', {'form': form})
-
-def a_propos(request):
-    template = loader.get_template('store/a_propos.html')
-    return render(request, 'store/a_propos.html')
-
 
 def disconnect(request):
     logout(request)
     redirect('index')
     return redirect('index')
-
-def connect(request): 
-    if request.method == 'POST':
-        form = CustomAuthenticationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            
-            # Définissez le champ 'username' avec la valeur de l'email
-            
-            user = authenticate(request, username=email, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('index')
-            else :
-                messages.error(request, 'Identifiant ou mot de passe incorrect.')
-                
-    else:
-        form = CustomAuthenticationForm(request.POST)
-    
-    return render(request, 'store/authentification.html', {'form': form})
 
 

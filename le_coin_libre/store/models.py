@@ -1,11 +1,6 @@
 from django.db import models
 from datetime import date
-from django.contrib.auth.models import User
 from unidecode import unidecode
-
-# Create your models here.
-class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
 
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
