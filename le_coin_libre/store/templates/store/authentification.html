@@ -1,0 +1,50 @@
+
+{%load static%}
+{%include 'store/header.html'%}
+
+<h1>Page d'authentification</h1>
+{% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+{%if in_auth_view%}
+<form class='auth' method="post"action="{% url 'auth' %}"> 
+    <div class="formulaire_auth">
+        
+        <!-- csrf_token est une protection contre les attaques Cross-Site Request Forgery -->
+        {% csrf_token %}
+        <!--as_p permet de générer un formulaire HTML avec une balise <p> pour chaque champ-->
+        {{ form.as_p }}
+        
+        <button type="submit">S'inscrire</button>
+    </div>
+</form>
+   
+
+
+{% elif request.user.is_authenticated %}
+<!-- afficher ici le compte utilisateur du connecté -->
+
+{%else%}
+<form class='auth' method="post" action="{% url 'connect' %}"> 
+    <div class="formulaire_auth">
+        
+        <!-- csrf_token est une protection contre les attaques CSRF (Cross-Site Request Forgery) -->
+        {% csrf_token %} 
+        <!--as_p permet de générer un formulaire HTML avec une balise <p> pour chaque champ-->
+        {{ form.as_p }}
+       
+        <button type="submit">Se connecter</button>
+    </div>
+</form>
+<a href="{% url 'auth' %}">Pas encore inscrit ? cliquez ici </a>
+
+
+{%endif%}
+
+
+{%include 'store/footer.html'%}
