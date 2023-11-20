@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
 from unidecode import unidecode
 import hashlib
+from django.contrib.auth.decorators import login_required
 
 def generer_chiffre_aleatoire_unique(string):
     # Utiliser SHA-256 pour créer un hachage unique
@@ -144,3 +145,41 @@ def connect(request):
         form = CustomAuthenticationForm(request.POST)
     
     return render(request, 'store/authentification.html', {'form': form}) 
+
+#def user_profile(request):
+@login_required   
+def user_profile(request):
+    try:
+        user_data = UserProfile.objects.get(email=request.email)
+        product_data = user_data.get_user_products()
+        image_data = Image.objects.filter(product__in=product_data)
+        context = {'user_data': user_data, 'product_data': product_data, 'image_data': image_data}
+        template = loader.get_template('store/user_profile.html')
+        return render(request, 'store/user_profile.html', context)
+    except UserProfile.DoesNotExist:
+        # Gérer le cas où le profil de l'utilisateur n'existe pas
+        return render(request, 'authentification.html')
+
+def modify_product(request, product_title):
+    existing_product = Product.objects.get(title = product_title)
+
+    if request.method == 'POST':
+        form = AddProductForm(request.POST, instance=existing_product)
+        if form.is_valid():
+            if request.user.is_authenticated:
+                modified_product = form.save(commit=False)
+                modified_product.user = request.user
+                modified_product.save()
+
+                photos = request.FILES.getlist('photos')
+                for photo in photos:
+                    img = Image.objects.create(image=photo, product=modified_product)
+                    img.save()
+
+                return redirect('index')
+            else:
+                return redirect('connect')
+    else:
+        form = AddProductForm(instance=existing_product)
+    return render(request, 'store/modify_product.html', {'form': form, 'product_id': product_title})
+    
