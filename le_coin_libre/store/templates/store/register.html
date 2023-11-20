@@ -1,0 +1,21 @@
+
+{%load static%}
+{%include 'store/header.html'%}
+
+
+{% block content %}
+  <h2>Register</h2>
+  <form method="post" action="{% url 'auth' %}">
+    {% csrf_token %}
+    <p>Email</p>
+    {{ form.username}}
+    <br>
+    <p>Mot de passe</p>
+    {{ form.password1}}
+    <br>
+    <p>Entrez votre mot de passe à nouveau</p>
+    {{ form.password2}}
+    <button type="submit">Register</button>
+  </form>
+{% endblock %}
+{%include 'store/footer.html'%}

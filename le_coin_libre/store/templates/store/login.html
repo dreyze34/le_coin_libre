@@ -1,0 +1,20 @@
+
+{%load static%}
+{%include 'store/header.html'%}
+
+{% block content %}
+  <h2>Login</h2>
+  <form method="post" action="{% url 'connect' %}">
+    {% csrf_token %}
+    <p>Email</p>
+    {{ form.username }}
+    <br>
+    <p>Password</p>
+    {{ form.password }}
+    <br>
+    <button type="submit">Login</button>
+  </form>
+{% endblock %}
+
+<a href="{% url 'auth' %}">Register</a>
+{%include 'store/footer.html'%}
