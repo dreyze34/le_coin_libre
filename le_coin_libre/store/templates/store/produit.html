@@ -1,11 +1,15 @@
 {% load static %}
 {%include 'store/header.html'%}
 
+
+
 <div class="bloc_produit">
     <div class="photo_produit">
-    {% for img in liste_produit.image%}
-        <img src= '../{{img}}'>
-        {%endfor%}
+        <img id="image" src= '../{{liste_produit.image.0}}' alt="Image" style="width: 400px; height: 300px;">
+        <center>
+            <button id="changeButtonMoins" onclick="changeImageMoins()">&larr;</button>
+            <button id="changeButtonPlus" onclick="changeImagePlus()">&rarr;</button>
+        </center>    
     </div>
     <div class="description_produit">
         <h1> {{ liste_produit.nom }} </h1>
@@ -14,5 +18,30 @@
         <p class="date">{{liste_produit.date}}</p>
     </div>
 </div>
+
+<script>
+    let currentIndex = 1; // Indice initial de l'image
+    const totalImages = {{liste_produit.nb_image}}; // Nombre total d'images
+
+    function changeImagePlus() {
+        currentIndex+=1;
+        if (currentIndex > totalImages) {
+            currentIndex = 1; // Revenir à la première image si on atteint la fin
+        }
+        
+        const imageElement = document.getElementById('image');
+        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+    }
+
+    function changeImageMoins() {
+        currentIndex-=1;
+        if (currentIndex <= 0) {
+            currentIndex = totalImages; // Revenir à la première image si on atteint la fin
+        }
+        
+        const imageElement = document.getElementById('image');
+        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+    }
+</script>
 
 {%include 'store/footer.html'%}

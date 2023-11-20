@@ -40,6 +40,7 @@ nav {
     flex-direction: row;
     font-family: 'Vina Sans', sans-serif;
     justify-content: space-around;
+    width : fit-content;
     align-items: center;
     font-size: 0.8em;
 }

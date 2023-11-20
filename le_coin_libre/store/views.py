@@ -40,8 +40,10 @@ def produit(request, id):
         'nom':product.title,
         'prix':product.price, 
         'description':product.description,
-        'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))]
+        'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))],
+        'nb_image':len([product.image_set.all()[i].image for i in range(len(product.image_set.all()))])
         }
+    print(len(product.image_set.all()))
     context = {'liste_produit': liste_produit}
     return render(request, 'store/produit.html', context)
 
