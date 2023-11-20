@@ -6,12 +6,15 @@ from unidecode import unidecode
 # Create your models here.
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
     normalized_name=models.CharField(max_length=200, default="default")
     def save(self, *args, **kwargs):
         self.normalized_name = unidecode(self.name).lower()
         super().save(*args, **kwargs)
+    def __str__(self):
+        return f"{self.name}"
 
 class Product(models.Model):
     title = models.CharField(max_length=200)
