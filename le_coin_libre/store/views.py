@@ -8,7 +8,16 @@ from .form import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 from .form import AddProductForm
 from unidecode import unidecode
+import hashlib
 
+def generer_chiffre_aleatoire_unique(string):
+    # Utiliser SHA-256 pour créer un hachage unique
+    hachage = hashlib.sha256(string.encode()).hexdigest()
+
+    # Convertir le hachage en un nombre entier
+    chiffre_aleatoire = int(hachage, 16)
+
+    return chiffre_aleatoire
 
 def index(request):
     template = loader.get_template('store/index.html')
@@ -76,22 +85,20 @@ def search(request):
 #bonjour123
 #il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
-    if request.method == 'POST':
-        form = CustomUserCreationForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password1']
-            
-            # Définissez le champ 'username' avec la valeur de l'email
-            form.instance.username = email
-            
-            user = form.save()
-            UserProfile.objects.create(user=user)
-            login(request, user)
-            return redirect('index')
+    
+    print("post")
+    form = CustomUserCreationForm(request.POST)
+    if form.is_valid():
+        email = form.cleaned_data['email']
+        password = form.cleaned_data['password1']
+        user = form.save()
+        user.id = generer_chiffre_aleatoire_unique(email)
+        user.save()
+        UserProfile.objects.create(user=user)
+        login(request, user)
+        return redirect('index')
                 
-    else:
-        form = CustomUserCreationForm()
+    
 
     return render(request, 'store/authentification.html', {'form': form})
 
@@ -113,7 +120,6 @@ def connect(request):
             password = form.cleaned_data['password']
             
             # Définissez le champ 'username' avec la valeur de l'email
-            form.username = email
             
             user = authenticate(request, username=email, password=password)
             if user is not None:
