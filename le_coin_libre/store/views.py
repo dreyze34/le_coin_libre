@@ -199,6 +199,13 @@ def user_profile(request):
 def delete_product(request, produit_id):
     produit = get_object_or_404(Product, id=int(produit_id))
     produit.delete()
+
+    try:
+        print('test')
+        print(os.getcwd())
+        shutil.rmtree(f'./store/static/images/{produit_id}')
+    except Exception as e:
+        print(f"Erreur lors de la suppression du répertoire : {e}")
     
     return redirect(request.META.get('HTTP_REFERER'))
             
