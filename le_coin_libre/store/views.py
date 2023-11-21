@@ -5,7 +5,17 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .form import AddProductForm
-import os
+from unidecode import unidecode
+import hashlib
+
+def generer_chiffre_aleatoire_unique(string):
+    # Utiliser SHA-256 pour créer un hachage unique
+    hachage = hashlib.sha256(string.encode()).hexdigest()
+
+    # Convertir le hachage en un nombre entier
+    chiffre_aleatoire = int(hachage, 16)
+
+    return chiffre_aleatoire
 
 def index(request):
     template = loader.get_template('store/index.html')
@@ -138,11 +148,9 @@ def connect(request):
                 login(request, user)
                 return redirect('index')
             else :
-                messages.error(request, "Identifiants incorrects")         
-    return render(request, 'store/login.html', {'form': form})
-
-
-def a_propos(request):
-    template = loader.get_template('store/a_propos.html')
-    return render(request, 'store/a_propos.html')
-
+                messages.error(request, 'Identifiant ou mot de passe incorrect.')
+                
+    else:
+        form = CustomAuthenticationForm(request.POST)
+    
+    return render(request, 'store/authentification.html', {'form': form}) 
