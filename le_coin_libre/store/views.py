@@ -1,5 +1,5 @@
-from django.shortcuts import render, redirect
-from store.models import Product, Image, Category
+from django.shortcuts import render, redirect,get_object_or_404
+from store.models import Product, Image, Category, UserProfile
 from django.template import loader
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -8,6 +8,8 @@ from .form import AddProductForm
 from unidecode import unidecode
 import os, shutil
 import hashlib
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 def generer_chiffre_aleatoire_unique(string):
     # Utiliser SHA-256 pour créer un hachage unique
@@ -21,20 +23,25 @@ def generer_chiffre_aleatoire_unique(string):
 def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
-    liste_produit = [
-        {'nom':ordered_list[i].title, 
-        'prix':ordered_list[i].price, 
-        'description':ordered_list[i].description, 
-        'image': [
-            ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
-        ],
-        'id':ordered_list[i].id,}
-        for i in range(len(ordered_list))
-    ]
-    print(ordered_list[1].image_set.all()[0].image)
-    liste_categories = Category.objects.all()
-    context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
-    return render(request, 'store/index.html', context)
+
+    if ordered_list :
+        liste_produit = [
+            {'nom':ordered_list[i].title, 
+            'prix':ordered_list[i].price, 
+            'description':ordered_list[i].description, 
+            'image': [
+                ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
+            ],
+            'id':ordered_list[i].id,}
+            for i in range(len(ordered_list))
+        ]
+        print(ordered_list[1].image_set.all()[0].image)
+        liste_categories = Category.objects.all()
+        context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
+        return render(request, 'store/index.html', context)
+    else :
+        context = {}
+        return render(request, 'store/index.html', context)
 
 def produit(request, id):
     template = loader.get_template('store/produit.html')
@@ -179,3 +186,18 @@ def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
 
+@login_required
+def user_profile(request):
+    a= request.GET.get("query", "")
+    b = User.objects.filter(email = a)[0]
+    user_data = b.userprofile
+    product_data = user_data.product_set.all()
+    image_data = Image.objects.filter(product__in=product_data)
+    context = {'user_data': user_data, 'product_data': product_data, 'image_data': image_data}
+    template = loader.get_template('store/user_profile.html')
+    return render(request, 'store/user_profile.html', context)
+
+def product_delete(request):
+    product_data = Product.objects.filter(user=request.user)
+    product_data.delete()
+    return render(request, 'store/user_profile.html')
