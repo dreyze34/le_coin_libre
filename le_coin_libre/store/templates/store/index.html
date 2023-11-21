@@ -27,7 +27,9 @@
                     <h1>{{ produit.nom }}</h1>
                 </a>
                 <h2 class="prix">{{ produit.prix }} €</h2>
+                <a href= '/user_profile/?query={{produit.user}}'><h3 class="user">{{produit.user}}</h3></a>
                 <p class="description">{{ produit.description }}</p>
+                <p class="date">{{produit.date}}</p>
             </div>
         </div>
     {% endfor %}

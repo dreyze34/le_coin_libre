@@ -28,7 +28,9 @@ def index(request):
         liste_produit = [
             {'nom':ordered_list[i].title, 
             'prix':ordered_list[i].price, 
-            'description':ordered_list[i].description, 
+            'description':ordered_list[i].description,
+            'user':ordered_list[i].user.user.username,
+            'date':ordered_list[i].date, 
             'image': [
                 ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
             ],
@@ -45,15 +47,17 @@ def index(request):
 def produit(request, id):
     template = loader.get_template('store/produit.html')
     product = Product.objects.get(id=id)
-    liste_produit = {
+    Product_data = {
         'nom':product.title,
-        'prix':product.price, 
+        'prix':product.price,
+        'date':product.date, 
         'description':product.description,
         'id':product.id,
+        'user':product.user.user.username,
         'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))],
         'nb_image':len([product.image_set.all()[i].image for i in range(len(product.image_set.all()))])
         }
-    context = {'liste_produit': liste_produit}
+    context = {'Product': Product_data}
     return render(request, 'store/produit.html', context)
 
 def handle_uploaded_file(file, i, destination_folder):
@@ -128,16 +132,28 @@ def search(request):
 
     if Product.objects.filter(normalized_title__icontains=search,  category = catégorie).exists() :
         resultat = Product.objects.filter(normalized_title__icontains=search,  category = catégorie)
-        liste_produit = liste_produit = [
-        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        liste_produit = [
+        {'nom':resultat[i].title,
+         'prix':resultat[i].price,
+         'description':resultat[i].description,
+         'user':resultat[i].user.user.username,
+         'date':resultat[i].date,
+         'image': resultat[i].image_set.all()[0].image,
+         'id':resultat[i].id}
         for i in range(len(resultat))
         ]
          
 
     elif Product.objects.filter(normalized_title__icontains=search).exists() and int(catégorie) == 0 :
         resultat = Product.objects.filter(normalized_title__icontains=search)
-        liste_produit = liste_produit = [
-        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        liste_produit = [
+        {'nom':resultat[i].title,
+         'prix':resultat[i].price,
+         'description':resultat[i].description,
+         'user':resultat[i].user.user.username,
+         'date':resultat[i].date,
+         'image': resultat[i].image_set.all()[0].image,
+         'id':resultat[i].id}
         for i in range(len(resultat))
         ]
        
@@ -201,8 +217,6 @@ def delete_product(request, produit_id):
     produit.delete()
 
     try:
-        print('test')
-        print(os.getcwd())
         shutil.rmtree(f'./store/static/images/{produit_id}')
     except Exception as e:
         print(f"Erreur lors de la suppression du répertoire : {e}")
