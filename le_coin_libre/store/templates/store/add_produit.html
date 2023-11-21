@@ -3,7 +3,7 @@
 
 {% block content %}
   <h1>Ajouter un produit</h1>
-  <form method="post" class="post-form">
+  <form method="post" class="post-form" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="btn btn-primary">Ajouter</button>

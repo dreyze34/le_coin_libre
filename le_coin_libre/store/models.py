@@ -1,7 +1,10 @@
 from django.db import models
 from datetime import date
 from django.contrib.auth.models import User
+from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager
 from unidecode import unidecode
+from django.utils import timezone
 
 # Create your models here.
 class UserProfile(models.Model):
@@ -20,15 +23,13 @@ class Product(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField(default=date.today)
-    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE, default=1)
+    date = models.DateField(default=timezone.now())
+    #user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(Category, on_delete = models.CASCADE)
     normalized_title=models.CharField(max_length=200, default="default")
     def save(self, *args, **kwargs):
         self.normalized_title = unidecode(self.title).lower()
         super().save(*args, **kwargs)
-        if not Image.objects.filter(product=self).exists():
-            Image.objects.create(product=self, image='static/images/No-img.jpg')
     
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')
