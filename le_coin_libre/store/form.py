@@ -1,6 +1,4 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
 from .models import Product, Category
 from django.forms.widgets import ClearableFileInput
 from multiupload.fields import MultiFileField
