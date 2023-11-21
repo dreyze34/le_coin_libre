@@ -25,6 +25,10 @@
               <div class="description_produit">
                   <a href='/produit/{{product.id}}'>
                       <h1>{{ product.title }}</h1>
+                      <form method="post" action="{% url 'supprimer_produit' product.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Supprimer produit</button>
+                    </form>
                   </a>
                   <h2 class="prix">{{ product.price }} €</h2>
                   <p class="description">{{ product.description }}</p>

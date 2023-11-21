@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from store.models import Product, Image, Category, UserProfile
 from django.template import loader
 from django.contrib import messages
@@ -35,7 +35,6 @@ def index(request):
             'id':ordered_list[i].id,}
             for i in range(len(ordered_list))
         ]
-        print(ordered_list[1].image_set.all()[0].image)
         liste_categories = Category.objects.all()
         context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
@@ -81,33 +80,39 @@ def copier_deplacer_image(chemin_source, chemin_destination, nouveau_nom):
 
 def add_product(request):
     if request.method == 'POST':
-        form = AddProductForm(request.POST)
-        if form.is_valid():               
-            product = form.save(commit=False)
-            # Associer le produit à l'utilisateur actuel
-            product.save()
-            product_id = product.id
-            list_photos = request.FILES.getlist('photos')
+        if request.user.is_authenticated :
+            form = AddProductForm(request.POST)
+            if form.is_valid():
+                title=form.cleaned_data['title']
+                description=form.cleaned_data['description']
+                price=form.cleaned_data['price']
+                category=form.cleaned_data['category']
+                username=request.user.username
+                user = User.objects.filter(username=username)[0]
+                product=Product(title=title, description=description, price=price, category=category, user = user.userprofile)
+                product.save()
+                product_id=product.id
+                list_photos = request.FILES.getlist('photos')
 
-            if not list_photos :
-                destination_folder = f'./store/static/images/{product_id}'
-                os.makedirs(destination_folder, exist_ok=True)
+                if not list_photos :
+                    destination_folder = f'./store/static/images/{product_id}'
+                    os.makedirs(destination_folder, exist_ok=True)
 
-                copier_deplacer_image('./store/static/images/No-img.jpg', destination_folder, 'image1.jpg')
+                    copier_deplacer_image('./store/static/images/No-img.jpg', destination_folder, 'image1.jpg')
 
-                img = Image.objects.create(image=f'./static/images/{product_id}/image1', product=product)
-                img.save()
-
-            if list_photos != [] :
-                destination_folder = f'./store/static/images/{product_id}'
-                os.makedirs(destination_folder, exist_ok=True)
-
-                for i in range(len(list_photos)):
-                    handle_uploaded_file(list_photos[i], i, destination_folder)
-                    img = Image.objects.create(image=f'./static/images/{product_id}/image{i+1}.jpg', product=product)
+                    img = Image.objects.create(image=f'./static/images/{product_id}/image1', product=product)
                     img.save()
 
-                return redirect('index')
+                if list_photos != [] :
+                    destination_folder = f'./store/static/images/{product_id}'
+                    os.makedirs(destination_folder, exist_ok=True)
+
+                    for i in range(len(list_photos)):
+                        handle_uploaded_file(list_photos[i], i, destination_folder)
+                        img = Image.objects.create(image=f'./static/images/{product_id}/image{i+1}.jpg', product=product)
+                        img.save()
+
+                    return redirect('index')
         else:
             return redirect('connect')
     else:
@@ -183,7 +188,7 @@ def a_propos(request):
 @login_required
 def user_profile(request):
     a= request.GET.get("query", "")
-    b = User.objects.filter(email = a)[0]
+    b = User.objects.filter(username = a)[0]
     user_data = b.userprofile
     product_data = user_data.product_set.all()
     image_data = Image.objects.filter(product__in=product_data)
@@ -191,7 +196,13 @@ def user_profile(request):
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
-def product_delete(request):
-    product_data = Product.objects.filter(user=request.user)
-    product_data.delete()
-    return render(request, 'store/user_profile.html')
+def supprimer_produit(request, produit_id):
+    produit = get_object_or_404(Product, id=int(produit_id))
+
+    if request.method == 'POST':
+        produit.delete()
+        return redirect('user_profile')  # Rediriger vers la vue de la liste des produits ou ajustez selon vos besoins
+    
+    return redirect('user_profile')
+            
+    
