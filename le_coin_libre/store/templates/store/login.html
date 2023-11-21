@@ -6,11 +6,11 @@
   <h2>Login</h2>
   <form method="post" action="{% url 'connect' %}">
     {% csrf_token %}
-    <p>Email</p>
-    {{ form.username }}
+    <p>Nom d'utilisateur</p>
+    {{form.username}}
     <br>
-    <p>Password</p>
-    {{ form.password }}
+    <p>Mot de passe</p>
+    {{form.password}}
     <br>
     <button type="submit">Login</button>
   </form>

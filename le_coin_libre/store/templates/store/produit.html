@@ -30,7 +30,7 @@
         }
         
         const imageElement = document.getElementById('image');
-        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+        imageElement.src = `../static/images/{{liste_produit.id}}/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
     }
 
     function changeImageMoins() {
@@ -40,7 +40,7 @@
         }
         
         const imageElement = document.getElementById('image');
-        imageElement.src = `../static/images/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
+        imageElement.src = `../static/images/{{liste_produit.id}}/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
     }
 </script>
 
