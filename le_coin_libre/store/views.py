@@ -185,24 +185,21 @@ def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
 
-@login_required
+
 def user_profile(request):
-    a= request.GET.get("query", "")
-    b = User.objects.filter(username = a)[0]
-    user_data = b.userprofile
-    product_data = user_data.product_set.all()
-    image_data = Image.objects.filter(product__in=product_data)
-    context = {'user_data': user_data, 'product_data': product_data, 'image_data': image_data}
+    username= request.GET.get("query", "")
+    user = User.objects.filter(username = username)[0]
+    userp = user.userprofile
+    userp_products = userp.product_set.all()
+    images = Image.objects.filter(product__in=userp_products)
+    context = {'user': userp, 'products': userp_products, 'images': images}
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
-def supprimer_produit(request, produit_id):
+def delete_product(request, produit_id):
     produit = get_object_or_404(Product, id=int(produit_id))
-
-    if request.method == 'POST':
-        produit.delete()
-        return redirect('user_profile')  # Rediriger vers la vue de la liste des produits ou ajustez selon vos besoins
+    produit.delete()
     
-    return redirect('user_profile')
+    return redirect(request.META.get('HTTP_REFERER'))
             
     
