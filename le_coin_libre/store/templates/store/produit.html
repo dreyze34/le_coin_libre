@@ -2,20 +2,20 @@
 {%include 'store/header.html'%}
 
 
-
-<div class="bloc_produit">
+<div class="bloc_produit_seul">
     <div class="photo_produit">
-        <img id="image" src= '../{{liste_produit.image.0}}' alt="Image" style="width: 400px; height: 300px;">
-        <center>
-            <button id="changeButtonMoins" onclick="changeImageMoins()">&larr;</button>
-            <button id="changeButtonPlus" onclick="changeImagePlus()">&rarr;</button>
-        </center>    
+        <button class='button_gauche' id="changeButton" onclick="changeImageMoins()">&#60</button>
+        <img id="image_seule" src= '../static/images/{{liste_produit.id}}/image1.jpg' alt="Image">
+        <button class='button_droite' id="changeButton" onclick="changeImagePlus()">&#62</button>
     </div>
-    <div class="description_produit">
-        <h1> {{ liste_produit.nom }} </h1>
-        <h3 class="prix"> {{ liste_produit.prix }} € </h3>
-        <p class="description"> {{ liste_produit.description }} </p>
-        <p class="date">{{liste_produit.date}}</p>
+    <p class="date_seul">{{liste_produit.date}}</p>
+    <div class="description_produit_seul">
+        <h1 class="titre_seul"> {{ liste_produit.nom }} </h1>
+        <h3 class="prix_seul"> {{ liste_produit.prix }} € </h3>
+        <div class="barre"></div>
+        <h3 class="titre_description">Description </h3>
+        <p class="description_seul"> {{ liste_produit.description }} </p>
+        
     </div>
 </div>
 
