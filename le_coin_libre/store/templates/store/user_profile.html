@@ -12,7 +12,8 @@
       <h3>Informations utilisateur :</h3>
       <p>Nom d'utilisateur : {{user.user.username }}</p>
       <p>Email : {{user.user.email }}</p>
-      <!-- Ajoutez d'autres informations utilisateur au besoin -->
+      <a href='/disconnect'><button>Se déconnecter</button></a>
+      
     </div>
   </div>
     <!-- Produits de l'utilisateur -->
@@ -28,7 +29,6 @@
                 <div class="description_produit">
                     <a href='/produit/{{product.id}}'>
                         <h1>{{product.title}}</h1>
-                        
                         <a href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()"><button>Supprimer</button></a>         
                     </a>
                     <h2 class="prix">{{product.price}} €</h2>

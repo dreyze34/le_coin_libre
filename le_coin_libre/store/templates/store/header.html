@@ -1,5 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
+
 <html>
     <head>
         
@@ -48,21 +49,21 @@
             <h1 class="titre"> Le Coin Libre </h1>
             <nav>
                 <div class="bouton_accueil">
-                    <a href = "../"> Accueil </a>
+                    <a href = "../">Accueil</a>
                     
                 </div>
                 {% if request.user.is_authenticated %}
                 <div class="bouton_accueil">
-                    <a href = "../disconnect"> Déconnexion </a> 
+                    <a href = "/user_profile/?query={{request.user.username}}">Mon profil</a>
                 </div> 
                 {%else%}
                 <div class="bouton_accueil">
-                    <a href = "../connect"> Connexion </a> 
+                    <a href = "../connect">Connexion</a> 
                 </div>  
                 {%endif%}
                 
                 <div class="bouton_accueil">
-                    <a href = "../add_product"> Faire un dépot </a>
+                    <a href = "../add_product">Faire un dépot</a>
                 </div>
         
                 <div class="bouton_accueil">
