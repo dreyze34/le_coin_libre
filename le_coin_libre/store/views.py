@@ -1,10 +1,10 @@
-from django.shortcuts import render, redirect,get_object_or_404
+from django.shortcuts import render, redirect
 from store.models import Product, Image, Category, UserProfile
 from django.template import loader
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .form import AddProductForm
+from .form import AddProductForm, RegistrationForm, LoginForm
 from unidecode import unidecode
 import os, shutil
 import hashlib
@@ -88,7 +88,6 @@ def add_product(request):
             product.save()
             product_id = product.id
             list_photos = request.FILES.getlist('photos')
-            print(list_photos)
 
             if not list_photos :
                 destination_folder = f'./store/static/images/{product_id}'
@@ -100,7 +99,6 @@ def add_product(request):
                 img.save()
 
             if list_photos != [] :
-                print('test')
                 destination_folder = f'./store/static/images/{product_id}'
                 os.makedirs(destination_folder, exist_ok=True)
 
@@ -129,7 +127,6 @@ def search(request):
         {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
         for i in range(len(resultat))
         ]
-        print(resultat[0].image_set.all()[0].image)
          
 
     elif Product.objects.filter(normalized_title__icontains=search).exists() and int(catégorie) == 0 :
@@ -138,15 +135,12 @@ def search(request):
         {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
         for i in range(len(resultat))
         ]
-        print(resultat[0].image_set.all()[0].image)
        
     else :
         liste_produit = []
     
     context = {'liste_produit' : liste_produit, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
-
-
 
 def disconnect(request):
     logout(request)
@@ -157,30 +151,30 @@ def disconnect(request):
 #bonjour123
 #il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
-    form= UserCreationForm()
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
-            return redirect('index')
+            userp=UserProfile(user=user)
+            userp.save()
+            return redirect('index')  # Rediriger vers la page d'accueil ou toute autre page après l'inscription
+    else:
+        form = RegistrationForm()
+
     return render(request, 'store/register.html', {'form': form})
     
 def connect(request):
-    form= AuthenticationForm()
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        print(form.is_valid())
+    if request.method == 'POST':
+        form = LoginForm(request, data=request.POST)
         if form.is_valid():
-            user= form.get_user()
-            print(f"user: {user}")
-            if user is not None :
+            user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
                 login(request, user)
-                return redirect('index')
-            else :
-                messages.error(request, "Identifiants incorrects")         
-    return render(request, 'store/login.html', {'form': form})
+                return redirect('index')  # Rediriger vers la page d'accueil ou toute autre page après la connexion
+    else:
+        form = LoginForm()
 
+    return render(request, 'store/login.html', {'form': form})
 
 def a_propos(request):
     template = loader.get_template('store/a_propos.html')
