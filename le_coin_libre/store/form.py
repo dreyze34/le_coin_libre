@@ -6,18 +6,18 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
 #formulaire de création d'un utilisateur
-class RegistrationForm(UserCreationForm):
-    email = forms.EmailField(label="Adresse e-mail", required=True)
+# class RegistrationForm(UserCreationForm):
+#     email = forms.EmailField(label="Adresse e-mail", required=True)
 
-    class Meta:
-        model = User
-        fields = ['username', 'email', 'password1', 'password2']
+#     class Meta:
+#         model = User
+#         fields = ['username', 'email', 'password1', 'password2']
 
     
 #forulaire de connexion d'un utilisateur
-class LoginForm(AuthenticationForm):
-    class Meta:
-        fields = ['username', 'password']
+# class LoginForm(AuthenticationForm):
+#     class Meta:
+#         fields = ['username', 'password']
 
 #formulaire d'ajout d'un produit
 class AddProductForm(forms.ModelForm):

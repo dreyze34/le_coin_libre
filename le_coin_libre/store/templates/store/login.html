@@ -6,7 +6,7 @@
   <h2>Login</h2>
   <form method="post" action="{% url 'connect' %}">
     {% csrf_token %}
-    <p>Nom d'utilisateur</p>
+    <p>Adresse Email</p>
     {{form.username}}
     <br>
     <p>Mot de passe</p>

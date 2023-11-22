@@ -4,8 +4,9 @@ from django.template import loader
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .form import AddProductForm, RegistrationForm, LoginForm
+#from .form import AddProductForm, RegistrationForm, LoginForm
 from unidecode import unidecode
+from .form import AddProductForm
 import os, shutil
 import hashlib
 
@@ -143,30 +144,31 @@ def disconnect(request):
 #bonjour123
 #il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
 def auth(request):
+    form= UserCreationForm()
     if request.method == 'POST':
-        form = RegistrationForm(request.POST)
+        form = UserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            userp=UserProfile(user=user)
-            userp.save()
-            return redirect('index')  # Rediriger vers la page d'accueil ou toute autre page après l'inscription
-    else:
-        form = RegistrationForm()
-
+            login(request, user)
+            return redirect('index')
     return render(request, 'store/register.html', {'form': form})
     
 def connect(request):
-    if request.method == 'POST':
-        form = LoginForm(request, data=request.POST)
+    form= AuthenticationForm()
+    if request.method == "POST":
+        form = AuthenticationForm(request, data=request.POST)
+        print(form.is_valid())
         if form.is_valid():
-            user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
-            if user is not None:
+            user= form.get_user()
+            print(f"user: {user}")
+            if user is not None :
                 login(request, user)
-                return redirect('index')  # Rediriger vers la page d'accueil ou toute autre page après la connexion
-    else:
-        form = LoginForm()
-
+                return redirect('index')
+            else :
+                messages.error(request, "Identifiants incorrects")         
     return render(request, 'store/login.html', {'form': form})
+
+
 
 def a_propos(request):
     template = loader.get_template('store/a_propos.html')

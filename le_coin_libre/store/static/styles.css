@@ -13,7 +13,7 @@ body {
 /* Header */
 header {
     display: flex;
-    background-color: rgb(141, 22, 22);
+    background: linear-gradient(to top,rgb(141, 22, 22),rgb(197, 127, 127));
     color: white;
     font-family: 'Monoton', sans-serif;
     font-size: 2em;

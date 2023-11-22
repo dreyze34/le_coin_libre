@@ -7,11 +7,8 @@
   <h2>Register</h2>
   <form method="post" action="{% url 'auth' %}">
     {% csrf_token %}
-    <p>Nom d'utilisateur</p>
+    <p>Adresse Email</p>
     {{form.username}}
-    <br>
-    <p>Email</p>
-    {{form.email}}
     <br>
     <p>Mot de passe</p>
     {{form.password1}}
