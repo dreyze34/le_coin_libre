@@ -32,3 +32,9 @@ class Product(models.Model):
 class Image(models.Model):
     image = models.ImageField(upload_to='static/images/',default='static/images/No-img.jpg')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
+
+class Order(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    purchase_date = models.DateTimeField(default=timezone.now)
+    

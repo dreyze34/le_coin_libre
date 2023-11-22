@@ -31,3 +31,5 @@ class AddProductForm(forms.ModelForm):
         model = Product
         fields = ['title', 'description', 'price', 'category']
 
+class OrderProduct(forms.ModelForm):
+    pass

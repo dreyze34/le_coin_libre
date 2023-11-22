@@ -19,7 +19,30 @@
     </div>
 </div>
 
+<div id="productForm" style="display:none;">
+    <form id="productForm" action="{% url 'order_product' %}" method="post">
+        {% csrf_token %}
+        <!-- Champs du formulaire -->
+
+        <label for="productId">ID du Produit:</label>
+        <input type="text" id="productId" name="productId">
+
+        <!-- Bouton de soumission du formulaire -->
+        <input type="submit" value="Réserver le produit">
+    </form>
+</div>
+
 <script>
+    function reserveProduct(productId) {
+        // Mettre à jour les champs du formulaire avec les informations du produit
+        document.getElementById('productId').value = productId;
+
+        document.getElementById('productForm').style.display = 'block';
+
+        // Soumettre automatiquement le formulaire
+        document.getElementById('productForm').submit();
+    }
+
     let currentIndex = 1; // Indice initial de l'image
     const totalImages = {{Product.nb_image}}; // Nombre total d'images
 

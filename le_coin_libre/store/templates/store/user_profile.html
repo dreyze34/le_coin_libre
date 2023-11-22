@@ -19,55 +19,6 @@
     <div>
       <CENTER><h3>Vos produits en vente </h3></CENTER>
       {% if products %}
-        {% for produit in products %}
-        <div class="bloc_produit">
-                <div class="photo_produit">
-                    <img src='../static/images/{{produit.id}}/image1.jpg'>
-                </div>
-                <div class="description_produit">
-                    <a href='/produit/{{produit.id}}'>
-                        <h1>{{ produit.nom }}</h1>
-                    </a>
-                    <h2 class="prix">{{ produit.prix }} €</h2>
-                    <div class="bloc_date_profil">
-                        <p>Annonce publiée par</p>
-                        <a href= '/user_profile/?query={{produit.user_mail}}'><p class="user"> {{produit.user}} </p></a>
-                        <!-- <p class="description">{{ produit.description }}</p>-->
-                        <p class="date">le {{produit.date}}</p>
-                    </div>
-                    
-                </div>
-            </div>
-        {% endfor %}
-      {% else %}
-        <p>Vous n'avez actuellement aucun produit en vente.</p>
-      {% endif %}
-    </div>
-    
-  <script>
-    function ConfirmDelete() {
-        const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
-          
-        return confirmation; // Renvoie true si l'utilisateur clique sur "OK" et false sinon
-    }
-  </script>
-
-{% else %}
-
-  <CENTER><h2>Bienvenue sur la page utilisateur de {{user.user.username}} !</h2></CENTER>
-  <div class="bloc_produit">
-    <!-- Informations utilisateur -->
-    <div>
-      <h3>Informations utilisateur :</h3>
-      <p>Nom d'utilisateur : {{user.user.username }}</p>
-      <p>Email : {{user.user.email }}</p>
-      <!-- Ajoutez d'autres informations utilisateur au besoin -->
-    </div>
-  </div>
-    <!-- Produits de l'utilisateur -->
-    <div>
-      <CENTER><h3>Produits en vente </h3></CENTER>
-      {% if products %}
           {% for product in products %}
             <li>
               <div class="bloc_produit">
@@ -76,20 +27,89 @@
                 </div>
                 <div class="description_produit">
                     <a href='/produit/{{product.id}}'>
-                        <h1>{{product.title}}</h1>         
+                        <h1>{{product.title}}</h1>
+                        <a href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()"><button>Supprimer</button></a>         
                     </a>
                     <h2 class="prix">{{product.price}} €</h2>
                     <p class="description">{{product.description}}</p>
                     <p class="date">{{product.date}}</p>
                 </div>
             </div>
-              <!-- Ajoutez d'autres détails du produit au besoin -->
-            </li>
-          {% endfor %}
-      {% else %}
-        <p>Aucun produit en vente.</p>
-      {% endif %}
+          </li>
+        {% endfor %}
+    {% else %}
+      <p>Vous n'avez actuellement aucun produit en vente.</p>
+    {% endif %}
+  </div>
+  <div>
+    <CENTER><h3>Vos produits réservés</h3></CENTER>
+    {% if reserved_products %}
+        {% for product in reserved_products %}
+          <li>
+            <div class="bloc_produit">
+              <div class="photo_produit">
+                  <img src='../static/images/{{product.id}}/image1.jpg' style="width: 300px;">
+              </div>
+              <div class="description_produit">
+                  <a href='/produit/{{product.id}}'>
+                      <h1>{{product.title}}</h1>
+                      <a href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()"><button>Supprimer</button></a>         
+                  </a>
+                  <h2 class="prix">{{product.price}} €</h2>
+                  <p class="description">{{product.description}}</p>
+                  <p class="buyer">{{product.order_set.all.0.buyer.user.username}}</p>
+                  <p class="date">{{product.date}}</p>
+              </div>
+          </li>
+        {% endfor %}
+    {% else %}
+      <p>Vous n'avez actuellement aucun produit réservé.</p> 
+    {% endif %}
+  </div>      
+  
+<script>
+  function ConfirmDelete() {
+      const confirmation = window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?");
+        
+      return confirmation; // Renvoie true si l'utilisateur clique sur "OK" et false sinon
+  }
+</script>
+
+{% else %}
+
+  <CENTER><h2>Bienvenue sur la page utilisateur de {{user.user.username}} !</h2></CENTER>
+  <div class="bloc_produit">
+    <!-- Informations utilisateur -->
+    <div>
+      <h3>Informations utilisateur :</h3>
+      <p>Nom d'utilisateur : {{user.user.username}}</p>
+      <p>Email : {{user.user.email}}</p>
     </div>
+  </div>
+    <!-- Produits de l'utilisateur -->
+  <div>
+    <CENTER><h3>Produits en vente</h3></CENTER>
+    {% if unreserved_products %}
+      {% for product in unreserved_products %}
+        <li>
+          <div class="bloc_produit">
+            <div class="photo_produit">
+                <img src='../static/images/{{product.id}}/image1.jpg' style="width: 300px;">
+            </div>
+            <div class="description_produit">
+                <a href='/produit/{{product.id}}'>
+                    <h1>{{product.title}}</h1>         
+                </a>
+                <h2 class="prix">{{product.price}} €</h2>
+                <p class="description">{{product.description}}</p>
+                <p class="date">{{product.date}}</p>
+            </div>
+        </li>
+      {% endfor %}
+    {% else %}
+      <p>Aucun produit en vente.</p>
+    {% endif %}
+  </div>
 
 {% endif %}
 
