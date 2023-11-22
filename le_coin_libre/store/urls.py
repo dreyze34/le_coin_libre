@@ -9,5 +9,7 @@ urlpatterns = [
     path('a_propos/',views.a_propos, name ='a_propos'),
     path('produit/<int:id>', views.produit, name= 'produit'),
     path('disconnect/', views.disconnect, name='disconnect'),
-    path("connect/", views.connect, name='connect')
+    path("connect/", views.connect, name='connect'),
+    path(r'user_profile/', views.user_profile, name='user_profile'),
+    path('delete_product/<int:produit_id>/', views.delete_product, name='delete_product'),
 ]

@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from store.models import Product, Image, Category, UserProfile
 from django.template import loader
 from django.contrib import messages
@@ -9,6 +9,8 @@ from unidecode import unidecode
 from .form import AddProductForm
 import os, shutil
 import hashlib
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 
 def generer_chiffre_aleatoire_unique(string):
     # Utiliser SHA-256 pour créer un hachage unique
@@ -22,32 +24,41 @@ def generer_chiffre_aleatoire_unique(string):
 def index(request):
     template = loader.get_template('store/index.html')
     ordered_list = Product.objects.all().order_by('-date')
-    liste_produit = [
-        {'nom':ordered_list[i].title, 
-        'prix':ordered_list[i].price, 
-        'description':ordered_list[i].description, 
-        'image': [
-            ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
-        ],
-        'id':ordered_list[i].id,}
-        for i in range(len(ordered_list))
-    ]
-    liste_categories = Category.objects.all()
-    context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
-    return render(request, 'store/index.html', context)
+
+    if ordered_list :
+        liste_produit = [
+            {'nom':ordered_list[i].title, 
+            'prix':ordered_list[i].price, 
+            'description':ordered_list[i].description,
+            'user':ordered_list[i].user.user.username,
+            'date':ordered_list[i].date, 
+            'image': [
+                ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
+            ],
+            'id':ordered_list[i].id,}
+            for i in range(len(ordered_list))
+        ]
+        liste_categories = Category.objects.all()
+        context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
+        return render(request, 'store/index.html', context)
+    else :
+        context = {}
+        return render(request, 'store/index.html', context)
 
 def produit(request, id):
     template = loader.get_template('store/produit.html')
     product = Product.objects.get(id=id)
-    liste_produit = {
+    Product_data = {
         'nom':product.title,
-        'prix':product.price, 
+        'prix':product.price,
+        'date':product.date, 
         'description':product.description,
         'id':product.id,
+        'user':product.user.user.username,
         'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))],
         'nb_image':len([product.image_set.all()[i].image for i in range(len(product.image_set.all()))])
         }
-    context = {'liste_produit': liste_produit}
+    context = {'Product': Product_data}
     return render(request, 'store/produit.html', context)
 
 def handle_uploaded_file(file, i, destination_folder):
@@ -74,33 +85,39 @@ def copier_deplacer_image(chemin_source, chemin_destination, nouveau_nom):
 
 def add_product(request):
     if request.method == 'POST':
-        form = AddProductForm(request.POST)
-        if form.is_valid():               
-            product = form.save(commit=False)
-            # Associer le produit à l'utilisateur actuel
-            product.save()
-            product_id = product.id
-            list_photos = request.FILES.getlist('photos')
+        if request.user.is_authenticated :
+            form = AddProductForm(request.POST)
+            if form.is_valid():
+                title=form.cleaned_data['title']
+                description=form.cleaned_data['description']
+                price=form.cleaned_data['price']
+                category=form.cleaned_data['category']
+                username=request.user.username
+                user = User.objects.filter(username=username)[0]
+                product=Product(title=title, description=description, price=price, category=category, user = user.userprofile)
+                product.save()
+                product_id=product.id
+                list_photos = request.FILES.getlist('photos')
 
-            if not list_photos :
-                destination_folder = f'./store/static/images/{product_id}'
-                os.makedirs(destination_folder, exist_ok=True)
+                if not list_photos :
+                    destination_folder = f'./store/static/images/{product_id}'
+                    os.makedirs(destination_folder, exist_ok=True)
 
-                copier_deplacer_image('./store/static/images/No-img.jpg', destination_folder, 'image1.jpg')
+                    copier_deplacer_image('./store/static/images/No-img.jpg', destination_folder, 'image1.jpg')
 
-                img = Image.objects.create(image=f'./static/images/{product_id}/image1', product=product)
-                img.save()
-
-            if list_photos != [] :
-                destination_folder = f'./store/static/images/{product_id}'
-                os.makedirs(destination_folder, exist_ok=True)
-
-                for i in range(len(list_photos)):
-                    handle_uploaded_file(list_photos[i], i, destination_folder)
-                    img = Image.objects.create(image=f'./static/images/{product_id}/image{i+1}.jpg', product=product)
+                    img = Image.objects.create(image=f'./static/images/{product_id}/image1', product=product)
                     img.save()
 
-                return redirect('index')
+                if list_photos != [] :
+                    destination_folder = f'./store/static/images/{product_id}'
+                    os.makedirs(destination_folder, exist_ok=True)
+
+                    for i in range(len(list_photos)):
+                        handle_uploaded_file(list_photos[i], i, destination_folder)
+                        img = Image.objects.create(image=f'./static/images/{product_id}/image{i+1}.jpg', product=product)
+                        img.save()
+
+                    return redirect('index')
         else:
             return redirect('connect')
     else:
@@ -116,16 +133,28 @@ def search(request):
 
     if Product.objects.filter(normalized_title__icontains=search,  category = catégorie).exists() :
         resultat = Product.objects.filter(normalized_title__icontains=search,  category = catégorie)
-        liste_produit = liste_produit = [
-        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        liste_produit = [
+        {'nom':resultat[i].title,
+         'prix':resultat[i].price,
+         'description':resultat[i].description,
+         'user':resultat[i].user.user.username,
+         'date':resultat[i].date,
+         'image': resultat[i].image_set.all()[0].image,
+         'id':resultat[i].id}
         for i in range(len(resultat))
         ]
          
 
     elif Product.objects.filter(normalized_title__icontains=search).exists() and int(catégorie) == 0 :
         resultat = Product.objects.filter(normalized_title__icontains=search)
-        liste_produit = liste_produit = [
-        {'nom':resultat[i].title, 'prix':resultat[i].price, 'description':resultat[i].description, 'image': resultat[i].image_set.all()[0].image}
+        liste_produit = [
+        {'nom':resultat[i].title,
+         'prix':resultat[i].price,
+         'description':resultat[i].description,
+         'user':resultat[i].user.user.username,
+         'date':resultat[i].date,
+         'image': resultat[i].image_set.all()[0].image,
+         'id':resultat[i].id}
         for i in range(len(resultat))
         ]
        
@@ -174,3 +203,26 @@ def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
 
+
+def user_profile(request):
+    username= request.GET.get("query", "")
+    user = User.objects.filter(username = username)[0]
+    userp = user.userprofile
+    userp_products = userp.product_set.all()
+    images = Image.objects.filter(product__in=userp_products)
+    context = {'user': userp, 'products': userp_products, 'images': images}
+    template = loader.get_template('store/user_profile.html')
+    return render(request, 'store/user_profile.html', context)
+
+def delete_product(request, produit_id):
+    produit = get_object_or_404(Product, id=int(produit_id))
+    produit.delete()
+
+    try:
+        shutil.rmtree(f'./store/static/images/{produit_id}')
+    except Exception as e:
+        print(f"Erreur lors de la suppression du répertoire : {e}")
+    
+    return redirect(request.META.get('HTTP_REFERER'))
+            
+    
