@@ -10,9 +10,9 @@
     <!-- Informations utilisateur -->
     <div>
       <h3>Informations utilisateur :</h3>
-      <p>Nom d'utilisateur : {{username}}</p>
+      <p>Prénom nom : {{username}}</p>
       <p>Email : {{email}}</p>
-      <a href='/disconnect'><button>Se déconnecter</button></a>
+      <a href='/disconnect'><button class="rechercher">Se déconnecter</button></a>
       
     </div>
   </div>
@@ -20,25 +20,27 @@
     <div>
       <CENTER><h3>Vos produits en vente </h3></CENTER>
       {% if products %}
-          {% for product in products %}
-            <li>
-              <div class="bloc_produit">
+          
+        {% for produit in liste_produit %}
+        <div class="bloc_produit">
                 <div class="photo_produit">
-                    <img src='../static/images/{{product.id}}/image1.jpg' style="width: 300px;">
+                    <img src='../static/images/{{produit.id}}/image1.jpg'>
                 </div>
                 <div class="description_produit">
-                    <a href='/produit/{{product.id}}'>
-                        <h1>{{product.title}}</h1>
-                        <a href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()"><button>Supprimer</button></a>         
+                    <a href='/produit/{{produit.id}}'>
+                        <h1>{{ produit.nom }}</h1>
                     </a>
-                    <h2 class="prix">{{product.price}} €</h2>
-                    <p class="description">{{product.description}}</p>
-                    <p class="date">{{product.date}}</p>
+                    <h2 class="prix">{{ produit.prix }} €</h2>
+                    <div class="bloc_date_profil">
+                        <p>Annonce publiée par</p>
+                        <a href= '/user_profile/?query={{produit.user_mail}}'><p class="user"> {{produit.user}} </p></a>
+                        <!-- <p class="description">{{ produit.description }}</p>-->
+                        <p class="date">le {{produit.date}}</p>
+                    </div>
+                    
                 </div>
             </div>
-              <!-- Ajoutez d'autres détails du produit au besoin -->
-            </li>
-          {% endfor %}
+        {% endfor %}
       {% else %}
         <p>Vous n'avez actuellement aucun produit en vente.</p>
       {% endif %}

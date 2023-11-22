@@ -57,7 +57,7 @@ def produit(request, id):
         'date':product.date, 
         'description':product.description,
         'id':product.id,
-        'user':product.user.user.username,
+        'user':product.user.username,
         'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))],
         'nb_image':len([product.image_set.all()[i].image for i in range(len(product.image_set.all()))])
         }
@@ -213,7 +213,6 @@ def user_profile(request):
     userp_products = user.product_set.all()
     images = Image.objects.filter(product__in=userp_products)
     context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'products': userp_products, 'images': images}
-    print(user.username)
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
