@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from store.models import Product, Image, Category, UserProfile
+from store.models import Product, Image, Category, UserProfile, Order
 from django.template import loader
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .form import AddProductForm, RegistrationForm, LoginForm
+from .form import AddProductForm, RegistrationForm, LoginForm, OrderProduct
 from unidecode import unidecode
 import os, shutil
 import hashlib
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponseForbidden
 
 def generer_chiffre_aleatoire_unique(string):
     # Utiliser SHA-256 pour créer un hachage unique
@@ -22,20 +23,22 @@ def generer_chiffre_aleatoire_unique(string):
 
 def index(request):
     template = loader.get_template('store/index.html')
-    ordered_list = Product.objects.all().order_by('-date')
-
-    if ordered_list :
+    reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
+    ordered_by_date_list = Product.objects.all().order_by('-date')
+    unreserved_products = [ordered_by_date_list[i] for i in range(len(ordered_by_date_list)) if ordered_by_date_list[i] not in reserved_products]
+    
+    if unreserved_products :
         liste_produit = [
-            {'nom':ordered_list[i].title, 
-            'prix':ordered_list[i].price, 
-            'description':ordered_list[i].description,
-            'user':ordered_list[i].user.user.username,
-            'date':ordered_list[i].date, 
+            {'nom':unreserved_products[i].title, 
+            'prix':unreserved_products[i].price, 
+            'description':unreserved_products[i].description,
+            'user':unreserved_products[i].user.user.username,
+            'date':unreserved_products[i].date, 
             'image': [
-                ordered_list[i].image_set.all()[j].image for j in range(len(ordered_list[i].image_set.all()))
+                unreserved_products[i].image_set.all()[j].image for j in range(len(unreserved_products[i].image_set.all()))
             ],
-            'id':ordered_list[i].id,}
-            for i in range(len(ordered_list))
+            'id':unreserved_products[i].id,}
+            for i in range(len(unreserved_products))
         ]
         liste_categories = Category.objects.all()
         context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
@@ -47,6 +50,7 @@ def index(request):
 def produit(request, id):
     template = loader.get_template('store/produit.html')
     product = Product.objects.get(id=id)
+        
     Product_data = {
         'nom':product.title,
         'prix':product.price,
@@ -59,6 +63,21 @@ def produit(request, id):
         }
     context = {'Product': Product_data}
     return render(request, 'store/produit.html', context)
+
+def order_product(request):
+    print('test1')
+    if request.method == 'POST':
+        print('test')
+        form = OrderProduct(request.POST)
+        return render(request, 'store/order_product.html')
+        print('test')
+        product = Product.objects.get(id=id)
+        reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]   
+        #if request.method == 'POST' :
+        if request.user.is_authenticated and product not in reserved_products :
+            order = Order.objects.create(product=product, buyer=request.user.userprofile)
+            order.save()
+    return redirect('index')
 
 def handle_uploaded_file(file, i, destination_folder):
     
@@ -165,7 +184,6 @@ def search(request):
 
 def disconnect(request):
     logout(request)
-    redirect('index')
     return redirect('index')
 
 #mathis.b@orange.fr
@@ -203,12 +221,15 @@ def a_propos(request):
 
 
 def user_profile(request):
+    reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
     username= request.GET.get("query", "")
     user = User.objects.filter(username = username)[0]
     userp = user.userprofile
-    userp_products = userp.product_set.all()
-    images = Image.objects.filter(product__in=userp_products)
-    context = {'user': userp, 'products': userp_products, 'images': images}
+    user_products = [userp.product_set.all()[i] for i in range(len(userp.product_set.all()))]
+    unreserved_products = [userp.product_set.all()[i] for i in range(len(userp.product_set.all())) if userp.product_set.all()[i] not in reserved_products ]
+    user_reserved_products = [reserved_products[i] for i in range(len(reserved_products)) if reserved_products[i] in userp.product_set.all()]
+    images = Image.objects.filter(product__in=user_products)
+    context = {'user': userp, 'reserved_products': user_reserved_products, 'unreserved_products': unreserved_products, 'images': images}
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 

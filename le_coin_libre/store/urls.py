@@ -12,4 +12,5 @@ urlpatterns = [
     path("connect/", views.connect, name='connect'),
     path(r'user_profile/', views.user_profile, name='user_profile'),
     path('delete_product/<int:produit_id>/', views.delete_product, name='delete_product'),
+    path('order_product/', views.order_product, name='order_product')
 ]
