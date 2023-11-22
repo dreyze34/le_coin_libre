@@ -5,16 +5,16 @@
 <div class="bloc_produit_seul">
     <div class="photo_produit">
         <button class='button_gauche' id="changeButton" onclick="changeImageMoins()">&#60</button>
-        <img id="image_seule" src= '../static/images/{{liste_produit.id}}/image1.jpg' alt="Image">
+        <img id="image" src= '../static/images/{{Product.id}}/image1.jpg' alt="Image">
         <button class='button_droite' id="changeButton" onclick="changeImagePlus()">&#62</button>
     </div>
-    <p class="date_seul">{{liste_produit.date}}</p>
+    <p class="date_seul">{{Product.date}}</p>
     <div class="description_produit_seul">
-        <h1 class="titre_seul"> {{ liste_produit.nom }} </h1>
-        <h3 class="prix_seul"> {{ liste_produit.prix }} € </h3>
+        <h1 class="titre_seul"> {{ Product.nom }} </h1>
+        <h3 class="prix_seul"> {{ Product.prix }} € </h3>
         <div class="barre"></div>
-        <h3 class="titre_description">Description </h3>
-        <p class="description_seul"> {{ liste_produit.description }} </p>
+        <h3 class="titre_description"></h3>Description </h3>
+        <p class="description_seul"> {{ Product.description }} </p>
         
     </div>
 </div>
@@ -43,5 +43,6 @@
         imageElement.src = `../static/images/{{Product.id}}/image${currentIndex}.jpg`; // Remplace image1.jpg, image2.jpg, etc.
     }
 </script>
+
 
 {%include 'store/footer.html'%}
