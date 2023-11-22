@@ -58,7 +58,7 @@ nav {
 
 /* Footer */
 footer{
-    background-color: rgb(141, 22, 22);
+    background: linear-gradient(to bottom,rgb(141, 22, 22),rgb(197, 127, 127));
     font-family: 'Vina Sans', sans-serif;
     color : white;
     text-align: center;
