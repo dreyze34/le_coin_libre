@@ -3,10 +3,33 @@
 
 {% block content %}
   <h1>Ajouter un produit</h1>
-  <form method="post" class="post-form" enctype="multipart/form-data">
+  <form class="formulaire_ajout_produit" method="post" class="post-form" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Ajouter</button>
+    <div class="titre_ajout">
+      <label class="titre_cellule" for="{{ form.title.id_for_label }}">Titre:</label>
+      {{ form.title }}
+    </div>
+
+    <div class="description_ajout">
+      <label class="titre_cellule" for="{{ form.description.id_for_label }}">Description:</label>
+      {{ form.description }}
+    </div>
+
+    <div class="prix_ajout">
+      <label class="titre_cellule" for="{{ form.price.id_for_label }}">Prix:</label>
+      {{ form.price }}
+    </div>
+
+    <div class="category_ajout">
+      <label class="titre_cellule" for="{{ form.category.id_for_label }}">Catégorie:</label>
+      {{ form.category }}
+    </div>
+
+    <div class="photos_ajout">
+      <label class="titre_cellule" for="{{ form.photos.id_for_label }}">Photos:</label>
+      {{ form.photos }}
+    </div>
+    <button class="rechercher" type="submit" class="btn btn-primary">Publier une annonce</button>
   </form>
 {% endblock %}
 
