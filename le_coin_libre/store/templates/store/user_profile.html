@@ -20,8 +20,7 @@
     <div>
       <CENTER><h3>Vos produits en vente </h3></CENTER>
       {% if products %}
-          
-        {% for produit in liste_produit %}
+        {% for produit in products %}
         <div class="bloc_produit">
                 <div class="photo_produit">
                     <img src='../static/images/{{produit.id}}/image1.jpg'>

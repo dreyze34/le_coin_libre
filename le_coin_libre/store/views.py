@@ -210,9 +210,22 @@ def a_propos(request):
 def user_profile(request):
     username= request.GET.get("query", "")
     user = User.objects.filter(username=username)[0]
-    userp_products = user.product_set.all()
+    userp_products = Product.objects.filter(user=user)
+    liste_produits = [
+            {'nom':userp_products[i].title, 
+            'prix':userp_products[i].price, 
+            'description':userp_products[i].description,
+            'user':decomposer_nom_prenom(userp_products[i].user.username),
+            'user_mail':userp_products[i].user.username,
+            'date':userp_products[i].date.strftime("%A %d %B %Y à %H:%M").lower(), 
+            'image': [
+                userp_products[i].image_set.all()[j].image for j in range(len(userp_products[i].image_set.all()))
+            ],
+            'id':userp_products[i].id,}
+            for i in range(len(userp_products))
+        ]
     images = Image.objects.filter(product__in=userp_products)
-    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'products': userp_products, 'images': images}
+    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'products': liste_produits, 'images': images}
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
