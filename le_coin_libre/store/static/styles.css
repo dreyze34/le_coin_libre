@@ -4,7 +4,8 @@ a{
     color:black;
 }
 body {
-    background-color: white;
+    background: url(images/fond.jpg) no-repeat center center fixed;
+    background-size: cover;
     font-family: 'Vina Sans', sans-serif;
     margin: 0;
     padding: 0;
@@ -13,7 +14,7 @@ body {
 /* Header */
 header {
     display: flex;
-    background: linear-gradient(to top,rgb(141, 22, 22),rgb(197, 127, 127));
+    background-color:rgb(141, 22, 22, 0.9);
     color: white;
     font-family: 'Monoton', sans-serif;
     font-size: 2em;
@@ -166,6 +167,7 @@ footer{
 /* Page accueil : bloc produit */
 
 .bloc_produit{
+    background-color: rgb(255,255,255,0.9);
     display: grid;
     grid-template-columns: 3fr 7fr;
     height: 20em;

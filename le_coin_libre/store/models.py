@@ -35,6 +35,6 @@ class Image(models.Model):
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    buyer = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     purchase_date = models.DateTimeField(default=timezone.now)
     

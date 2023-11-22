@@ -1,10 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from store.models import Product, Image, Category, UserProfile, Order
+from store.models import Product, Image, Category, Order
 from django.template import loader
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
-from .form import AddProductForm, RegistrationForm, LoginForm, OrderProduct
+from .form import AddProductForm, OrderProduct
 from unidecode import unidecode
 from .form import AddProductForm
 import os, shutil
@@ -21,32 +21,31 @@ def decomposer_nom_prenom(email):
     prenom = str.upper(prenom[0])+prenom[1:]
     return nom + " " + prenom
 
-
 def index(request):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/index.html')
     reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
     ordered_by_date_list = Product.objects.all().order_by('-date')
     unreserved_products = [ordered_by_date_list[i] for i in range(len(ordered_by_date_list)) if ordered_by_date_list[i] not in reserved_products]
-    
+    liste_categories = Category.objects.all()
     if unreserved_products :
         liste_produit = [
             {'nom':unreserved_products[i].title, 
             'prix':unreserved_products[i].price, 
             'description':unreserved_products[i].description,
-            'user':unreserved_products[i].user.user.username,
-            'date':unreserved_products[i].date, 
+            'user':unreserved_products[i].user.username,
+            'date':unreserved_products[i].date.strftime("%A %d %B %Y à %H:%M").lower(), 
             'image': [
                 unreserved_products[i].image_set.all()[j].image for j in range(len(unreserved_products[i].image_set.all()))
             ],
             'id':unreserved_products[i].id,}
             for i in range(len(unreserved_products))
         ]
-        liste_categories = Category.objects.all()
+        
         context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
     else :
-        context = {}
+        context = {'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
 
 def produit(request, id):
@@ -56,7 +55,7 @@ def produit(request, id):
     Product_data = {
         'nom':product.title,
         'prix':product.price,
-        'date':product.date, 
+        'date':product.date.strftime("%A %d %B %Y à %H:%M").lower(), 
         'description':product.description,
         'id':product.id,
         'user':product.user.username,
@@ -73,8 +72,8 @@ def order_product(request):
         product = Product.objects.get(id=product_id)
         reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
 
-        if request.user.is_authenticated and product not in reserved_products :
-            order = Order.objects.create(product=product, buyer=request.user.userprofile)
+        if User.is_authenticated() and product not in reserved_products :
+            order = Order.objects.create(product=product, buyer=request)
             order.save()
         
         return redirect('index')
@@ -85,7 +84,7 @@ def order_product(request):
 def handle_uploaded_file(file, i, destination_folder):
     
     original_filename, file_extension = os.path.splitext(file.name)
-    filename = f'image{i+1}' + file_extension
+    filename = f'image{i+1}' + '.jpg'
 
     destination_path = os.path.join(destination_folder, filename)
 

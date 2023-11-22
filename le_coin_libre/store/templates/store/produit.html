@@ -8,10 +8,11 @@
         <img id="image" src= '../static/images/{{Product.id}}/image1.jpg' alt="Image">
         <button class='button_droite' id="changeButton" onclick="changeImagePlus()">&#62</button>
     </div>
-    <p class="date_seul">{{Product.date}}</p>
+   
     <div class="description_produit_seul">
         <h1 class="titre_seul"> {{ Product.nom }} </h1>
-        <h3 class="prix_seul"> {{ Product.prix }} € </h3>
+        <h2 class="prix_seul"> {{ Product.prix }} € </h2>
+        <p class="date_seul">{{Product.date}}</p>
         <div class="barre"></div>
         <h3 class="titre_description"></h3>Description </h3>
         <p class="description_seul"> {{ Product.description }} </p>
