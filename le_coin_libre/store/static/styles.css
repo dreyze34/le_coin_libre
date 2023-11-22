@@ -22,6 +22,7 @@ header {
     height: fit-content;
     flex-direction: column;
     align-items: baseline;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
 .titre {
     font-size: 1.5em;
@@ -130,76 +131,54 @@ footer{
 
 
 
-/* Page accueil */
-
-
-.rechercher {
-    background-color: #2c2c2c;
-    color: white;
-    border: none;
-    padding: 0.5em;
-    margin: 0.5em;
-    border-radius: 0.5em;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1em;
-}
-
-
-.bloc_produit{
-    display: flex;
-    flex-direction: column;
-}
+/* Page accueil : barre recherche */
 
 .Recherche_form{
     display:grid;
-    grid-template-columns: 6fr 3fr 1fr;
-    gap: 1em;
-    height:2em;
-    margin-bottom:5em;
+    grid-template-columns: 1fr 4fr 1fr;
+    margin : 2em 20em 5em 20em;
+    
+
+}
+.catégories , .rechercher{
+    margin-right:2em;
+    background-color:rgb(141, 22, 22);
+    color:white;
+    font-size:large;
+    font-weight:bold;
+    padding : 1em 1em 1em 1em;
 }
 
-input{
-    background-color: white;
-    color: #2c2c2c;
-    border: none;
-    padding: 0.5em;
-    margin: 0.5em;
-    border-radius: 0.5em;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1em;
-    width: auto;
+.rechercher{
+    border:none;
 }
 
-select{
-    background-color: white;
-    color: #2c2c2c;
-    border: none;
-    padding: 0.5em;
-    margin: 0.5em;
-    border-radius: 0.5em;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1em;
-    width: auto;
-    height:2em;
+
+.barre_recherche{
+    border-bottom: solid 0.3em rgb(141,22,22);
+    border-top: none;
+    border-left:none;
+    border-right:none;
+    font-size:medium;
+    padding-left:1em;
 }
 
+/* Page accueil : bloc produit */
 
 .bloc_produit{
     display: grid;
     grid-template-columns: 3fr 7fr;
-    grid-template-rows: 1fr;
-    align-items: center;
-    justify-content: center;
-    margin-left: 10em;
-    margin-right:10em;
-    margin-top:2em;
-    margin-bottom:2em;
-    padding: 1em;
-    border: 3px solid grey;
-    border-radius: 0.5em;
-    height: fit-content;
+    height: 20em;
+    margin : 2em 15em 2em 15em;
+    padding: 2em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
+.photo_produit{
+    height:20em;
+    justify-content:flex-start;
+}
 
 .description_produit{
     display: flex;
@@ -208,10 +187,12 @@ select{
     
 }
 
-.prix {}
+.prix {
+    margin-top : 2em;
+}
 
-.description{
-    margin-top: 3em;
+.bloc_produit h1:hover{
+    color: grey;
 }
 
 .formulaire_auth{
@@ -221,6 +202,16 @@ select{
     align-items: center;
     margin-top: 3em;
     margin-bottom: 3em;
+}
+
+.bloc_date_profil{
+    display:flex;
+    flex-direction: row;
+    color:grey;
+    font-size:small;
+    justify-content: flex-end;
+    gap:3px;
+    margin-top: auto; 
 }
 
 /*Page à propos*/

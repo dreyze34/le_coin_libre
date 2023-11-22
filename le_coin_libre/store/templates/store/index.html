@@ -4,15 +4,14 @@
         <!-- construction d'une barre de recherche -->
 
         <form class="Recherche_form" id="search" action="{%url 'search' %}">
-            <input type="text" id="search" name="search" placeholder="Entrez votre recherche">
-            <select id="categorie" name="Catégorie">
+            <select id="categorie" class ="catégories" name="Catégorie">
                 <option value="0"> Catégorie </option>
                 {% for categorie in liste_categories %}
                 <option value="{{ categorie.id }}"> {{ categorie.name }} </option>
                 {% endfor %}
             </select>
+            <input class="barre_recherche" type="text" id="search" name="search" placeholder="Entrez votre recherche">
             <input class="rechercher" type="submit" value="Rechercher">
-        
         </form>
 
         <!-- construction d'un bloc produit à itérer --> 
@@ -20,16 +19,20 @@
         {% for produit in liste_produit %}
     <div class="bloc_produit">
             <div class="photo_produit">
-                <img src='../static/images/{{produit.id}}/image1.jpg' style="width: 300px;">
+                <img src='../static/images/{{produit.id}}/image1.jpg'>
             </div>
             <div class="description_produit">
                 <a href='/produit/{{produit.id}}'>
                     <h1>{{ produit.nom }}</h1>
                 </a>
                 <h2 class="prix">{{ produit.prix }} €</h2>
-                <a href= '/user_profile/?query={{produit.user}}'><h3 class="user">{{produit.user}}</h3></a>
-                <p class="description">{{ produit.description }}</p>
-                <p class="date">{{produit.date}}</p>
+                <div class="bloc_date_profil">
+                    <p>Annonce publiée par</p>
+                    <a href= '/user_profile/?query={{produit.user_mail}}'><p class="user"> {{produit.user}} </p></a>
+                    <!-- <p class="description">{{ produit.description }}</p>-->
+                    <p class="date">le {{produit.date}}</p>
+                </div>
+                
             </div>
         </div>
     {% endfor %}

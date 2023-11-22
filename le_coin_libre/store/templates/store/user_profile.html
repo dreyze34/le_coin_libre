@@ -3,15 +3,15 @@
 
 {% block content %}
 
-{% if request.user.is_authenticated and request.user.username == user.user.username %}
+{% if request.user.is_authenticated and request.user.username == email %}
 
-  <CENTER><h2>Bienvenue sur votre page utilisateur, {{user.user.username}} !</h2></CENTER>
+  <CENTER><h2>Bienvenue sur votre page utilisateur, {{username}} !</h2></CENTER>
   <div class="bloc_produit">
     <!-- Informations utilisateur -->
     <div>
       <h3>Informations utilisateur :</h3>
-      <p>Nom d'utilisateur : {{user.user.username }}</p>
-      <p>Email : {{user.user.email }}</p>
+      <p>Nom d'utilisateur : {{username}}</p>
+      <p>Email : {{email}}</p>
       <a href='/disconnect'><button>Se déconnecter</button></a>
       
     </div>

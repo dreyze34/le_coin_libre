@@ -5,15 +5,19 @@
          <!-- construction d'une barre de recherche -->
 
          <form class="Recherche_form" id="search" action="{%url 'search' %}">
-            <input type="text" id="search" name="search" placeholder="Entrez votre recherche">
-            <select id="categorie" name="Catégorie">
+            <select id="categorie" class ="catégories" name="Catégorie">
                 <option value="0"> Catégorie </option>
                 {% for categorie in liste_categories %}
                 <option value="{{ categorie.id }}"> {{ categorie.name }} </option>
                 {% endfor %}
             </select>
-            <input class="rechercher" type="submit" value="Rechercher">
-        </form>
+            <div class="bloc_recherche_droite">
+                <input class="barre_recherche" type="text" id="search" name="search" placeholder="Entrez votre recherche">
+                <input class="rechercher" type="submit" value="Rechercher">
+            </div>
+         </form>
+        
+
 
 
         <!-- construction des résultats de la recherche-->
@@ -21,7 +25,7 @@
         {% for produit in liste_produit %}
         <div class="bloc_produit">
             <div class="photo_produit">
-                <img src= '../static/images/{{produit.id}}/image1.jpg' style="width: 300px;">
+                <img src= '../static/images/{{produit.id}}/image1.jpg'>
             </div>
             <div class="détails_produit">
                 <a href='/produit/{{produit.id}}'><h1> {{ produit.nom }} </h1></a>
