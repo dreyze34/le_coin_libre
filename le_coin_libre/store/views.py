@@ -65,19 +65,20 @@ def produit(request, id):
     return render(request, 'store/produit.html', context)
 
 def order_product(request):
-    print('test1')
+
     if request.method == 'POST':
-        print('test')
-        form = OrderProduct(request.POST)
-        return render(request, 'store/order_product.html')
-        print('test')
-        product = Product.objects.get(id=id)
-        reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]   
-        #if request.method == 'POST' :
+        product_id = request.POST.get("productId")
+        product = Product.objects.get(id=product_id)
+        reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
+
         if request.user.is_authenticated and product not in reserved_products :
             order = Order.objects.create(product=product, buyer=request.user.userprofile)
             order.save()
-    return redirect('index')
+        
+        return redirect('index')
+    
+    else :
+        return redirect('index')
 
 def handle_uploaded_file(file, i, destination_folder):
     

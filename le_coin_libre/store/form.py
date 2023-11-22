@@ -32,4 +32,4 @@ class AddProductForm(forms.ModelForm):
         fields = ['title', 'description', 'price', 'category']
 
 class OrderProduct(forms.ModelForm):
-    id = forms.DecimalField(default=13)
+    pass
