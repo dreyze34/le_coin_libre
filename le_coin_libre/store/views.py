@@ -8,10 +8,15 @@ from .form import AddProductForm, OrderProduct
 from unidecode import unidecode
 from .form import AddProductForm
 import os, shutil, locale
+import hashlib
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
 
+#hahsage sha-256 de la conversation: 
+def hachage(name):
+   name= name.encode('utf-8')
+   return hashlib.sha256(name).hexdigest()
 
 # Transformation d'une adresse e-mail Centrale de la forme "prenom.nom@student-cs.fr" en "prenom nom"
 def decomposer_nom_prenom(email):
@@ -303,7 +308,7 @@ def home(request):
 
 def room(request , room):
     username = request.GET.get('username')
-    room_details = Room.objects.all()
+    room_details = Room.objects.get(name=room)
     return render(request , 'store/room.html' , {
         'username' : username ,
         'room' : room ,
@@ -313,15 +318,15 @@ def room(request , room):
 def checkview(request):
     room1 = str(request.POST['room_name'])
     username = request.user.username
-    if Room.objects.filter(name = username+room1).exists():
-        room = username+room1
+    if Room.objects.filter(name = hachage(username+room1)).exists():
+        room = hachage(username+room1)
         return redirect('/'+ room + '/?username=' + username)
-    elif Room.objects.filter(name = room1+username).exists():
-        room = room1+username
+    elif Room.objects.filter(name = hachage(room1+username)).exists():
+        room = hachage(room1+username)
         return redirect('/'+ room + '/?username=' + username)
     else:
-        room = username+room1
-        new_room = Room.objects.create(name = username+room1)
+        room = hachage(username+room1)
+        new_room = Room.objects.create(name = room)
         new_room.save()
         return redirect ('/'+ room+ '/?username=' + username)
 
