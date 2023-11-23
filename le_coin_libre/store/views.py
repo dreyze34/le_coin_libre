@@ -7,12 +7,12 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .form import AddProductForm, OrderProduct
 from unidecode import unidecode
 from .form import AddProductForm
-import os, shutil
-import hashlib
+import os, shutil, hashlib, locale
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-import locale
 
+
+# Transformation d'une adresse e-mail Centrale de la forme "prenom.nom@student-cs.fr" en "prenom nom"
 def decomposer_nom_prenom(email):
     nom, prenom = email.split('.', 1)
     prenom = prenom.split('@')[0]
@@ -20,6 +20,34 @@ def decomposer_nom_prenom(email):
     prenom = str.upper(prenom[0])+prenom[1:]
     return nom + " " + prenom
 
+
+# Gestion des fichiers téléversés lors de l'ajout d'un produit
+def handle_uploaded_file(file, i, destination_folder):
+    
+    original_filename, file_extension = os.path.splitext(file.name)
+    filename = f'image{i+1}' + '.jpg'
+
+    destination_path = os.path.join(destination_folder, filename)
+
+    with open(destination_path, 'wb+') as destination :
+        for chunk in file.chunks():
+            destination.write(chunk)
+    destination.close()
+
+
+# Copier/Renommer une image et la déplacer dans un autre dossier
+def copier_deplacer_image(chemin_source, chemin_destination, nouveau_nom):
+    # Copier l'image du dossier source vers le dossier de destination
+    shutil.copy(chemin_source, chemin_destination)
+
+    # Construire le nouveau chemin complet avec le nouveau nom de fichier
+    nouveau_chemin = os.path.join(chemin_destination, nouveau_nom)
+
+    # Renommer le fichier dans le dossier de destination
+    os.rename(os.path.join(chemin_destination, os.path.basename(chemin_source)), nouveau_chemin)
+
+
+# Retourne la liste des produits en page d'accueil
 def index(request):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/index.html')
@@ -47,6 +75,8 @@ def index(request):
         context = {'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
 
+
+# Retourne les caractéristiques d'un produit sur la page produit associée
 def produit(request, id):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/produit.html')
@@ -65,6 +95,8 @@ def produit(request, id):
     context = {'Product': Product_data}
     return render(request, 'store/produit.html', context)
 
+
+# Permet de réserver un produit
 def order_product(request):
 
     if request.method == 'POST':
@@ -81,28 +113,8 @@ def order_product(request):
     else :
         return redirect('index')
 
-def handle_uploaded_file(file, i, destination_folder):
-    
-    original_filename, file_extension = os.path.splitext(file.name)
-    filename = f'image{i+1}' + '.jpg'
 
-    destination_path = os.path.join(destination_folder, filename)
-
-    with open(destination_path, 'wb+') as destination :
-        for chunk in file.chunks():
-            destination.write(chunk)
-    destination.close()
-
-def copier_deplacer_image(chemin_source, chemin_destination, nouveau_nom):
-    # Copier l'image du dossier source vers le dossier de destination
-    shutil.copy(chemin_source, chemin_destination)
-
-    # Construire le nouveau chemin complet avec le nouveau nom de fichier
-    nouveau_chemin = os.path.join(chemin_destination, nouveau_nom)
-
-    # Renommer le fichier dans le dossier de destination
-    os.rename(os.path.join(chemin_destination, os.path.basename(chemin_source)), nouveau_chemin)
-
+# Permet de poster l'annonce d'un produit avec ses caractéristiques 
 def add_product(request):
     if request.method == 'POST':
         if request.user.is_authenticated :
@@ -145,6 +157,8 @@ def add_product(request):
 
     return render(request, 'store/add_produit.html', {'form': form})
 
+
+# Permet de rechercher un produit 
 def search(request):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/recherche.html')
@@ -185,13 +199,14 @@ def search(request):
     context = {'liste_produit' : liste_produit, 'liste_categories' : liste_categories}
     return render(request, 'store/recherche.html', context)
 
+
+# Permet aux utilisateurs de se déconnecter de leur session
 def disconnect(request):
     logout(request)
     return redirect('index')
 
-#mathis.b@orange.fr
-#bonjour123
-#il faudra ajouter la vérification des mails centrale supélec et l'envoi de mail de confirmation
+
+# Création d'un nouvel utilisateur
 def auth(request):
     form= UserCreationForm()
     if request.method == 'POST':
@@ -202,6 +217,8 @@ def auth(request):
             return redirect('index')
     return render(request, 'store/register.html', {'form': form})
     
+    
+# Connexion d'un utilisateur
 def connect(request):
     form= AuthenticationForm()
     if request.method == "POST":
@@ -219,11 +236,14 @@ def connect(request):
 
 
 
+# Retourne les informations de la page "A propos" (contacts, service après vente...)
 def a_propos(request):
     template = loader.get_template('store/a_propos.html')
     return render(request, 'store/a_propos.html')
 
 
+
+# Retourne les informations de la page profil d'un utilisateur
 def user_profile(request):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
@@ -257,6 +277,9 @@ def user_profile(request):
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
+
+
+# Supprimer un produit ainsi que son répertoire d'image(s) associé
 def delete_product(request, produit_id):
     produit = get_object_or_404(Product, id=int(produit_id))
     produit.delete()
