@@ -6,7 +6,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 from unidecode import unidecode
 from django.utils import timezone
 
-# Create your models here.
+
 
 class Category(models.Model):
     name = models.CharField(max_length=300, unique=True)
@@ -46,5 +46,6 @@ class Message(models.Model):
     date = models.DateTimeField(default=timezone.now , blank = True)
     user = models.CharField(max_length=100)
     room = models.CharField(max_length=200)
+    username=models.CharField(max_length=100,default='test')
 
     

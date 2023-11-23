@@ -103,6 +103,7 @@ footer{
     text-align: center;
     padding: 5px;
     margin:0px;
+    margin-top:15em;
 
 }
 
@@ -482,6 +483,73 @@ footer{
     height:fit-content;
 }
 
+/* Page messagerie */
+
+.bloc_messagerie{
+    background-color: rgb(255,255,255,0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin : 2em 15em 0em 15em;
+    padding: 2em;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    height:20em;
+    overflow-y: scroll;
+}
+
+.bloc_envoi{
+    background-color: rgb(255,255,255,0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin : 0em 15em 15em 15em;
+    padding: 2em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+.envoi_form{
+    display:grid;
+    grid-template-columns:5fr 1fr;
+}
+.message{
+    display: flex;
+    flex-direction: column;
+    margin : 0.1em 2em 0.1em 2em;
+    width:100%;
+    padding: 2em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.date{
+    color:grey;
+    font-size:small;
+    margin-top: auto;
+}
+
+.accueil_messagerie{
+    background-color: rgb(255,255,255,0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin : 2em 15em 25em 15em;
+    padding: 2em;
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    height:20em;
+}
+
+.rechercher_message{
+    margin-right:2em;
+    background-color:rgb(141, 22, 22);
+    color:white;
+    font-size:large;
+    font-weight:bold;
+    padding : 1em 1em 1em 1em;
+    cursor: pointer;
+    margin:2em 20em 2em 20em;
+    border:none;
+
+}
 /* ajouter les media query pour les écrans plus petits */
 
 

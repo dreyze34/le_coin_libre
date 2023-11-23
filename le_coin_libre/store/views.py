@@ -301,9 +301,9 @@ def delete_product(request, produit_id):
             
 #fonctions associés au chat
 def home(request):
-    liste_room = [User.objects.get(id=user['buyer']).username for user in Order.objects.values('buyer').distinct()]
-    template = loader.get_template('store/home.html')
-    context = {'liste_room' : liste_room}
+    liste_room = [User.objects.get(id=user['buyer']) for user in Order.objects.values('buyer').distinct()]
+
+    context = {'liste_room' : liste_room,}
     return render(request, 'store/home.html',context)
 
 def room(request , room):
@@ -334,12 +334,12 @@ def send(request):
     message = request.POST['message']
     username = request.POST['username']
     room_id = request.POST['room_id']
-    new_message = Message.objects.create(value= message , user = username , room = room_id)
+    new_message = Message.objects.create(value= message , user = username , room = room_id, username=decomposer_nom_prenom(username))
     new_message.save()
     return HttpResponse('Message envoyé avec succès')
 
 def getMessages(request,room):
     room_details = Room.objects.get(name=room)
     messages = Message.objects.filter(room = room_details.id).order_by('date')
+    #message_sender = {key:decomposer_nom_prenom(key.user) for key in messages}
     return JsonResponse({"messages" :list(messages.values())})
-
