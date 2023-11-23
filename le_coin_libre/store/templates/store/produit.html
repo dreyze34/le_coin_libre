@@ -15,33 +15,27 @@
         <p class="date_seul">{{Product.date}}</p>
         <div class="barre"></div>
         <h2 class="titre_description">Description </h2>
-        <p class="description_seul"> {{ Product.description }} </p>
-        <button id="reserveButton" onclick="reserveProduct('{{Product.id}}')">Réserver le produit</button>
+        <div class="descripiton_reservation">
+            <p class="description_seul"> {{ Product.description }} </p>
+            <form method='post' class="reserver_produit" action="{%url 'order_product'%}">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{Product.id}}">
+                <button class="rechercher" type="submit" onclick=>Réserver</button>
+            </form>
+        </div>
+        
     </div>
 </div>
 
-<div id="productForm" style="display:none;">
-    <form id="productForm" action="{% url 'order_product' %}" method="post">
-        {% csrf_token %}
-        <!-- Champs du formulaire -->
-
-        <label for="productId">ID du Produit:</label>
-        <input type="text" id="productId" name="productId">
-
-        <!-- Bouton de soumission du formulaire -->
-        <input type="submit" value="Réserver le produit">
-    </form>
-</div>
 
 <script>
     function reserveProduct(productId) {
-        // Mettre à jour les champs du formulaire avec les informations du produit
-        document.getElementById('productId').value = productId;
+        var Numero_produit=productId;
+        {csrf_token};
+        fetch("{%url 'order_product' %}",{
+            method:'POST',body:Numero_produit
+        });
 
-        document.getElementById('productForm').style.display = 'block';
-
-        // Soumettre automatiquement le formulaire
-        document.getElementById('productForm').submit();
     }
 
     let currentIndex = 1; // Indice initial de l'image

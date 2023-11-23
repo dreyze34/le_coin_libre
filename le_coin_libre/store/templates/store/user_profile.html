@@ -48,7 +48,7 @@
       {% endif %}
   </div>
   <div>
-    <CENTER><h3>Vos produits réservés</h3></CENTER>
+    <CENTER><h2>Vos produits réservés</h2></CENTER>
     {% if reserved_products %}
         {% for product in reserved_products %}
           <div class="bloc_produit">
@@ -60,12 +60,17 @@
                     <h1>{{ product.title }}</h1>
                 </a>
                 <h2 class="prix">{{ product.price}} €</h2>
+                <div class="bloc_reservation_profil">
+                  <p>Réservé par</p>
+                  <a href= '/user_profile/?query={{product.buyer_mail}}'><p class="user"> {{product.buyer}} </p></a>
+                </div>
                 <div class="bloc_bas_produit_profil">
                   <div class="bloc_date_profil">
-                    <p>Annonce publiée par</p>
-                    <a href= '/user_profile/?query={{product.user_mail}}'><p class="user"> {{product.user}} </p></a>
-                    <p class="date">le {{product.date}}</p>
+                    <p>Annonce publiée le </p>
+                    <p class="date"> {{product.date}}</p>
                   </div>
+
+            
                   <a class="supprimer" href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()">Supprimer</a>         
                     </a>
                 </div>

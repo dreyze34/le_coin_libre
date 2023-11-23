@@ -68,7 +68,7 @@ def produit(request, id):
 def order_product(request):
 
     if request.method == 'POST':
-        product_id = request.POST.get("productId")
+        product_id = int(request.POST.get("product_id"))
         product = Product.objects.get(id=product_id)
         reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
 
@@ -245,7 +245,10 @@ def user_profile(request):
             'id': userp_products[i].id,
             }
         if userp_products[i] in reserved_products :
+            product_data['buyer'] = decomposer_nom_prenom(Order.objects.filter(product=userp_products[i])[0].buyer.username)
+            product_data['buyer_mail'] = Order.objects.filter(product=userp_products[i])[0].buyer.username
             user_reserved_products.append(product_data)
+
         else :
             unreserved_products.append(product_data)
     
