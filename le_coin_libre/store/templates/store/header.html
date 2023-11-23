@@ -9,66 +9,35 @@
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Monoton&family=Roboto&display=swap" rel="stylesheet">
-        <style>
-            /* Supprime le soulignement par défaut et change la couleur du texte du lien */
-            a {
-                text-decoration: none;
-                color: black; /* Vous pouvez définir la couleur que vous préférez */
-            }
-            #changeButtonPlus {
-                background-color: #525452; /* Couleur de fond du bouton */
-                color: white; /* Couleur du texte du bouton */
-                border: none; /* Supprimer la bordure du bouton */
-                padding: 10px 20px; /* Espacement intérieur du bouton */
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 4px; /* Bords arrondis */
-            }
-            #changeButtonMoins {
-                background-color: #525452; /* Couleur de fond du bouton */
-                color: white; /* Couleur du texte du bouton */
-                border: none; /* Supprimer la bordure du bouton */
-                padding: 10px 20px; /* Espacement intérieur du bouton */
-                text-align: center;
-                text-decoration: none;
-                display: inline-block;
-                font-size: 16px;
-                margin: 4px 2px;
-                cursor: pointer;
-                border-radius: 4px; /* Bords arrondis */
-            }
-        </style>
 
     </head>
-    <body>
-        <header>
-            <h1 class="titre"> Le Coin Libre </h1>
-            <nav>
-                <div class="bouton_accueil">
-                    <a href = "../">Accueil</a>
-                    
-                </div>
-                {% if request.user.is_authenticated %}
-                <div class="bouton_accueil">
-                    <a href = "/user_profile/?query={{request.user.username}}">Mon profil</a>
-                </div> 
-                {%else%}
-                <div class="bouton_accueil">
-                    <a href = "../connect">Connexion</a> 
-                </div>  
-                {%endif%}
-                
-                <div class="bouton_accueil">
-                    <a href = "../add_product">Publier</a>
-                </div>
+    <header>
         
-                <div class="bouton_accueil">
-                    <a href = "../a_propos"> A propos </a>
-                </div>
+        <nav>
+            <div>
+                <a href = "../"><h1 class="titre"> Le Coin Libre </h1></a>
                 
-            </nav>
-        </header>
+            </div>
+            {% if request.user.is_authenticated %}
+            <div class="bouton_accueil">
+                <a href = "/user_profile/?query={{request.user.username}}">Mon profil</a>
+            </div> 
+            {%else%}
+            <div class="bouton_accueil">
+                <a href = "../connect">Connexion</a> 
+            </div>  
+            {%endif%}
+            
+            <div class="bouton_accueil">
+                <a href = "../add_product">Publier</a>
+            </div>
+    
+            <div class="bouton_accueil">
+                <a href = "../a_propos"> A propos </a>
+            </div>
+            
+        </nav>
+    </header>
+    <body>
+       
+    

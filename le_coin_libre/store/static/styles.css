@@ -9,31 +9,43 @@ body {
     font-family: 'Vina Sans', sans-serif;
     margin: 0;
     padding: 0;
+    margin-top:10em;
+    width:100%;
+
 }
 
 /* Header */
 header {
-    display: flex;
     background-color:rgb(141, 22, 22, 0.9);
     color: white;
-    font-family: 'Monoton', sans-serif;
-    font-size: 2em;
+    font-size: 1.5em;
     font-weight: bold;
-    margin: 0;
+    margin: 0px;
+    padding: 0px;
     height: fit-content;
-    flex-direction: column;
-    align-items: baseline;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
 }
 .titre {
     font-size: 1.5em;
+    font-family: 'Monoton', sans-serif;
+    color:white;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-radius: 0.5em;
 }
+
+
 
 nav {
     display: grid;
     font-family: 'Vina Sans', sans-serif;
     flex-wrap: wrap;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    align-items: center;
     width: 100%;
 }
 
@@ -58,9 +70,33 @@ nav {
     border: 2px solid white;
 }
 
+.bouton_ajout_dynamique{
+    background-color: rgb(141, 22, 22);
+    width: 3em;
+    height: 3em;
+    border-radius: 50%;
+    cursor: pointer;
+    position:fixed;
+    bottom: 5em;
+    right:7.5em;
+}
+
+.bouton_ajout_dynamique a{
+    font-family: 'quicksand', sans-serif;
+    color: rgba(255,255,255,0.9);
+    font-size:3em;
+    display:flex;
+    justify-content: center;
+    line-height: 0.9em;
+
+}
+
+.bouton_ajout_dynamique:hover{
+    border: 0.3em solid white;
+}
 /* Footer */
 footer{
-    background: linear-gradient(to bottom,rgb(141, 22, 22),rgb(197, 127, 127));
+    background-color:rgb(141, 22, 22, 0.9);
     font-family: 'Vina Sans', sans-serif;
     color : white;
     text-align: center;
@@ -68,7 +104,8 @@ footer{
     width: 100%;
     flex: 1;
     padding: 5px;
-    margin-bottom: 0;
+    margin:0px;
+
 }
 
 /* Page produit */ 
@@ -148,6 +185,7 @@ footer{
     font-size:large;
     font-weight:bold;
     padding : 1em 1em 1em 1em;
+    cursor: pointer;
 }
 
 .rechercher{
@@ -180,6 +218,7 @@ footer{
 .photo_produit{
     height:20em;
     justify-content:center;
+    margin-right: 1em;
 }
 
 .description_produit{
@@ -209,6 +248,7 @@ footer{
 
 /*User profil*/
 .bloc_date_profil{
+    background-color: none;
     display:flex;
     flex-direction: row;
     color:grey;
@@ -219,6 +259,7 @@ footer{
 }
 
 .bloc_profil{
+    background-color: rgb(255,255,255,0.9);
     display: grid;
     grid-template-rows : 3fr 1fr;
     height: fit-content;
@@ -232,6 +273,25 @@ footer{
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
+}
+
+.supprimer{
+    background-color:rgb(141, 22, 22);
+    color:white;
+    font-size:large;
+    font-weight:bold;
+    padding : 1em 1em 1em 1em;
+    cursor: pointer;
+    border:none;
+
+}
+
+.bloc_bas_produit_profil {
+    width:100%;
+    display: flex;
+    justify-content:space-between;
+    align-items: flex-start;
+    margin-top: auto;
 }
 /*Page à propos*/
 
