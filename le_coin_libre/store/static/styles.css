@@ -456,7 +456,8 @@ footer{
     cursor: pointer;
     border:none;
     height:fit-content;
-
 }
+
+/* ajouter les media query pour les écrans plus petits */
 
 
