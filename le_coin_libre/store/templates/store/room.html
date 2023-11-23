@@ -1,0 +1,82 @@
+{% load static %}
+{%include 'store/header.html' %}
+
+    <!-- AJAX -->
+    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+
+
+<!-- Récupération des messages en ajax -->
+<script>
+    $(document).ready(function(){
+        var display = $("#display");
+        setInterval(function(){
+            $.ajax({
+                type: 'GET',
+                url : "/getMessages/{{room}}/",
+                success: function(response){
+                    console.log(response);
+                    var isAtBottom = display.scrollTop() + display.innerHeight() >= display[0].scrollHeight;
+                    $("#display").empty();
+                    for (var key in response.messages)
+                    {
+                        var rawDate = new Date(response.messages[key].date);
+                        var formattedDate = rawDate.toLocaleString('fr-FR', {day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute:'2-digit'});
+                        var temp="<div class='message'><b>"+response.messages[key].username+"</b><p>"+response.messages[key].value+"</p><span class='date'>"+formattedDate+"</span></div>";
+                        $("#display").append(temp);
+                    }
+                    // Scroll to the bottom of the chat window if the user is already at the bottom
+                    if (isAtBottom) {
+                        $("#display").scrollTop($("#display")[0].scrollHeight);
+                    }
+                },
+                error: function(response){
+                    alert('An error occured')
+                }
+            });
+        },2000);
+    });
+    </script>
+
+
+
+<div id="display" class = "bloc_messagerie">
+    <!-- Les messages de chat seront ajoutés ici -->
+    <p>Aucun message présent</p>
+</div>
+<div class="bloc_envoi">
+    <form class="envoi_form" id="post-form" action="/send/" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="username" id="username" value="{{username}}"/>
+        <input type="hidden" name="room_id" id="room_id" value="{{room_details.id}}"/>
+        <input class="barre_recherche" type="text" name="message" id="message" width="100px" />
+        <input class="rechercher" type="submit" value="Send">
+    </form>
+</div>
+
+<script type="text/javascript">
+    // pour soumettre le formulaire en ajax
+        $(document).on('submit','#post-form',function(e){
+    e.preventDefault();
+
+    $.ajax({
+        type:'POST',
+        url:'/send',
+        data:{
+            username:$('#username').val(),
+            room_id:$('#room_id').val(),
+            message:$('#message').val(),
+        csrfmiddlewaretoken:$('input[name=csrfmiddlewaretoken]').val(),
+        },
+    //la  réponse HTTP pour signaler que le message a été envoyé avec succes
+        success: function(data){
+        // alert(data)
+        }
+    });
+    document.getElementById('message').value = ''
+    });
+</script>
+
+
+</html>
+
+{%include 'store/footer.html' %}

@@ -1,0 +1,19 @@
+{% load static %}
+{%include 'store/header.html' %}
+
+<body>
+    <div class="accueil_messagerie">
+        <h1><CENTER>Messagerie</CENTER></h1>
+        {%for rooms in liste_room%}
+        <form method="post" action="checkview">
+            {% csrf_token %}
+            <input type="hidden" name="room_name" value="{{rooms.username}}">
+            <button type='submit' method='post' class="rechercher_message" action="checkview"> {{rooms.username}} </button>
+            <br>
+        </form>
+        {%endfor%}
+    </div>
+</body>
+</html>
+
+{%include 'store/footer.html' %}
