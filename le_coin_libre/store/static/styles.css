@@ -347,6 +347,15 @@ footer{
     border-bottom: solid 0.2em rgb(141,22,22);
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+.linkedin-image {
+    transition: opacity 0.3s ease-in-out; /* Effet de transition sur l'opacité */
+}
+
+.linkedin-image:hover {
+    opacity: 0.6; /* Opacité légèrement réduite au survol */
+}
+
 /*Ajouter un produit*/
 
 .formulaire_ajout_produit{
