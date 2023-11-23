@@ -65,7 +65,8 @@ def index(request):
             'image': [
                 unreserved_products[i].image_set.all()[j].image for j in range(len(unreserved_products[i].image_set.all()))
             ],
-            'id':unreserved_products[i].id,}
+            'id':unreserved_products[i].id,
+            'username': decomposer_nom_prenom(unreserved_products[i].user.username),}
             for i in range(len(unreserved_products))
         ]
         

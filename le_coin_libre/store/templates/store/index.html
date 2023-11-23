@@ -19,7 +19,7 @@
 
         <!-- construction d'un bloc produit à itérer --> 
 
-    {% for produit in liste_produit %}
+        {% for produit in liste_produit %}
     <div class="bloc_produit">
             <div class="photo_produit">
                 <img src='../static/images/{{produit.id}}/image1.jpg'>
@@ -31,12 +31,9 @@
                 <h2 class="prix">{{ produit.prix }} €</h2>
                 <div class="bloc_date_profil">
                     <p>Annonce publiée par</p>
-                    <a href= '/user_profile/?query={{produit.user}}'>
-                        <p class="user"> {{produit.user}} </p>
-                    </a>
-                    <p class="date">
-                        le {{produit.date}}
-                    </p>
+                    <a href= '/user_profile/?query={{produit.user}}'><p class="user"> {{produit.username}} </p></a>
+                    <!-- <p class="description">{{ produit.description }}</p>-->
+                    <p class="date">le {{produit.date}}</p>
                 </div>
                 
             </div>
