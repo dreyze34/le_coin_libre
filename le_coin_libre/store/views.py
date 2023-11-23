@@ -1,15 +1,16 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from store.models import Product, Image, Category, Order
+from store.models import Product, Image, Category, Order, Room, Message
 from django.template import loader
 from django.contrib import messages
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import login, logout
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from .form import AddProductForm, OrderProduct
 from unidecode import unidecode
 from .form import AddProductForm
-import os, shutil, hashlib, locale
+import os, shutil, locale
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.http import HttpResponse, JsonResponse
 
 
 # Transformation d'une adresse e-mail Centrale de la forme "prenom.nom@student-cs.fr" en "prenom nom"
@@ -293,4 +294,47 @@ def delete_product(request, produit_id):
     
     return redirect(request.META.get('HTTP_REFERER'))
             
-    
+#fonctions associés au chat
+def home(request):
+    liste_room = [User.objects.get(id=user['buyer']).username for user in Order.objects.values('buyer').distinct()]
+    template = loader.get_template('store/home.html')
+    context = {'liste_room' : liste_room}
+    return render(request, 'store/home.html',context)
+
+def room(request , room):
+    username = request.GET.get('username')
+    room_details = Room.objects.all()
+    return render(request , 'store/room.html' , {
+        'username' : username ,
+        'room' : room ,
+        'room_details' : room_details
+    })
+
+def checkview(request):
+    room1 = str(request.POST['room_name'])
+    username = request.user.username
+    if Room.objects.filter(name = username+room1).exists():
+        room = username+room1
+        return redirect('/'+ room + '/?username=' + username)
+    elif Room.objects.filter(name = room1+username).exists():
+        room = room1+username
+        return redirect('/'+ room + '/?username=' + username)
+    else:
+        room = username+room1
+        new_room = Room.objects.create(name = username+room1)
+        new_room.save()
+        return redirect ('/'+ room+ '/?username=' + username)
+
+def send(request):
+    message = request.POST['message']
+    username = request.POST['username']
+    room_id = request.POST['room_id']
+    new_message = Message.objects.create(value= message , user = username , room = room_id)
+    new_message.save()
+    return HttpResponse('Message envoyé avec succès')
+
+def getMessages(request,room):
+    room_details = Room.objects.get(name=room)
+    messages = Message.objects.filter(room = room_details.id).order_by('date')
+    return JsonResponse({"messages" :list(messages.values())})
+

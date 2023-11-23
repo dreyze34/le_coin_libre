@@ -37,4 +37,14 @@ class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     buyer = models.ForeignKey(User, on_delete=models.CASCADE)
     purchase_date = models.DateTimeField(default=timezone.now)
+
+class Room(models.Model):
+    name = models.CharField(max_length=200)
+
+class Message(models.Model):
+    value = models.CharField(max_length=200)
+    date = models.DateTimeField(default=timezone.now , blank = True)
+    user = models.CharField(max_length=100)
+    room = models.CharField(max_length=200)
+
     

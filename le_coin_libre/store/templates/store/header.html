@@ -24,14 +24,17 @@
             </div> 
             {%else%}
             <div class="bouton_accueil">
-                <a href = "../connect">Connexion</a> 
+                <a href = "{% url 'connect' %}">Connexion</a> 
             </div>  
             {%endif%}
             
             <div class="bouton_accueil">
                 <a href = "../add_product">Publier</a>
             </div>
-    
+            
+            <div class="bouton_accueil">
+                <a href = "../chat">Messagerie</a>
+            </div>
             <div class="bouton_accueil">
                 <a href = "../a_propos"> A propos </a>
             </div>
