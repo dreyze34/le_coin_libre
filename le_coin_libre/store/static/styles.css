@@ -101,7 +101,6 @@ footer{
     color : white;
     text-align: center;
     bottom: 0;
-    width: 100%;
     flex: 1;
     padding: 5px;
     margin:0px;
@@ -112,10 +111,14 @@ footer{
 
 
 .bloc_produit_seul{
-    margin: 2em;
+    background-color: rgb(255,255,255,0.9);
+    display: grid;
+    grid-template-rows: 10fr 7fr;
+    height: fit-content;
+    margin : 2em 15em 2em 15em;
     padding: 2em;
-    border: 0.5em solid rgb(186, 186, 186);
-    border-radius: 2em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .photo_produit {
@@ -123,8 +126,7 @@ footer{
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: 25em;
-    flex-wrap: nowrap;
+    height:30em;
 }
 
 .photo_produit img {
@@ -132,20 +134,21 @@ footer{
 }
 
 .photo_produit button{
-    background-color: #2c2c2c;
+    background-color: rgb(141, 22, 22);
     height:100%;
     width:2em;
     color : white;
+    border:none;
 }
 
 .button_gauche{
-    border-start-start-radius: 2em;
-    border-end-start-radius: 2em;
+    border-start-start-radius: 25%;
+    border-end-start-radius: 25%;
 }
 
 .button_droite{
-    border-start-end-radius: 2em;
-    border-end-end-radius: 2em;
+    border-start-end-radius: 25%;
+    border-end-end-radius: 25%;
 }
 
 .date_seul{
@@ -157,16 +160,20 @@ footer{
 }
 
 .description_produit_seul{
+    
 }
 
 .prix_seul{
 }
 
 .barre{
-    border:rgb(186, 186, 186) solid 0.1em;
+    border:rgb(141,22,22) solid 0.1em;
     border-radius: 0.5em;
 }
 
+.titre_description{
+    font-weight: bold;
+}
 
 
 /* Page accueil : barre recherche */
@@ -245,6 +252,10 @@ footer{
     margin-bottom: 3em;
 }
 
+.Nom{
+    text-align: center;
+}
+
 
 /*User profil*/
 .bloc_date_profil{
@@ -293,59 +304,159 @@ footer{
     align-items: flex-start;
     margin-top: auto;
 }
+
 /*Page à propos*/
 
-.section {
-    background-color: #f7f7f7; /* Couleur de fond */
-    color: #333; /* Couleur du texte */
-    border: 1px solid #ccc; /* Bordure */
-    padding: 20px; /* Espacement intérieur */
-    margin: 20px 0; /* Marge extérieure en haut et en bas, pas sur les côtés */
-    border-radius: 8px; /* Rayon de bordure */
-    font-family: Arial, sans-serif; /* Famille de police */
-    font-size: 16px; /* Taille de police */
-    line-height: 1.6; /* Hauteur de ligne */
-    width: 95%;
-}
 
 .team-member {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
 }
 
-.team-member > div {
-    flex: 0 0 calc(33.333% - 20px); /* Pour afficher 3 membres par ligne */
-    margin-right: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.team-member > div:nth-child(3n) {
-    margin-right: 0;
-}
 
 .team-member img {
-    max-width: 100%;
+    width: 60%;
+    height:60%;
     border-radius: 50%;
-    margin-bottom: 10px;
+    margin-bottom: 1em;
+    object-fit: cover;
 }
 
-/*Ajouter un produit*/
-
-.formulaire_ajout_produit{
+.bloc_a_propos{
+    background-color: rgb(255,255,255,0.9);
     display: grid;
-    grid-template-rows : 1fr 1fr 1fr 1fr 3fr;
+    grid-template-columns: 3fr 7fr;
     height: fit-content;
-    margin : 2em 30em 2em 30em;
+    margin : 2em 15em 2em 15em;
     padding: 2em;
     border-bottom: solid 0.2em rgb(141,22,22);
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-    justify-content: center;
-} 
+}
+/*Ajouter un produit*/
+
+.formulaire_ajout_produit{
+    background-color: rgb(255,255,255,0.9);
+    gap:1em 0em;
+    display: grid;
+    grid-template-rows : 1fr 1fr 3fr 1fr 1fr 1fr 1fr;
+    height: fit-content;
+    margin : 2em 15em 2em 15em;
+    padding: 5em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
 
 
 .titre_cellule{
-    margin-right:2em;
     font-weight:bold;
+    margin-right:1em;
 }
+.titre_ajout{
+    width:100%;
+    height:100%;
+    margin:0.2em;
+}
+.Titre_ajout{
+    background-color: rgba(255,255,255,0.9);
+    border-bottom: solid 0.3em rgba(141,22,22);
+    border-top: solid 0.1em rgba(141,22,22);
+    border-left:solid 0.1em rgba(141,22,22);
+    border-right:solid 0.1em rgba(141,22,22);
+    font-size:large;
+    font-weight: bold;
+    width: 80%;
+}
+
+.description_ajout{
+    margin:0.2em;
+    width:100%;
+    height:100%;
+
+}
+.Description_ajout{
+    width:100%;
+    height:100%;
+    margin-top:0.5em;
+    background-color: rgba(255,255,255,0.9);
+    border-bottom: solid 0.3em rgba(141,22,22);
+    border-top: solid 0.1em rgba(141,22,22);
+    border-left:solid 0.1em rgba(141,22,22);
+    border-right:solid 0.1em rgba(141,22,22);
+    font-size:large;
+    height: auto;
+
+}
+
+.prix_ajout{
+    margin:0.2em;
+    font-weight: bold;
+}
+.Prix_ajout{
+    margin-top:0.2em;
+    background-color: rgba(255,255,255,0.9);
+    border-bottom: solid 0.3em rgba(141,22,22);
+    border-top: solid 0.1em rgba(141,22,22);
+    border-left:solid 0.1em rgba(141,22,22);
+    border-right:solid 0.1em rgba(141,22,22);
+    font-size:large;
+    width:20%;
+}
+
+.categorie_ajout{
+    margin:0.2em;
+    font-weight: bold;}
+
+.Categorie_ajout{
+    margin-top:0.2em;
+    background-color: rgba(255,255,255,0.9);
+    border-bottom: solid 0.3em rgba(141,22,22);
+    border-top: solid 0.1em rgba(141,22,22);
+    border-left:solid 0.1em rgba(141,22,22);
+    border-right:solid 0.1em rgba(141,22,22);
+    font-size:large;
+    width:50%;
+
+}
+
+.photos_ajout{
+    margin:0.2em;
+    font-weight: bold;
+}
+.Photos_ajout{
+    margin-top:0.5em;
+    background-color: rgba(255,255,255,0.9);
+    border:none;
+    font-size:large;
+    width:50%;
+}
+
+
+/* Page connexion */
+
+.formulaire_connexion{
+    background-color: rgb(255,255,255,0.9);
+    gap:1em 0em;
+    display: grid;
+    grid-template-rows : 1fr 1fr 1fr 1fr;
+    height: fit-content;
+    margin : 2em 30em 2em 30em;
+    padding: 5em;
+    border-bottom: solid 0.2em rgb(141,22,22);
+    box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.Connexion{
+    margin-right:2em;
+    background-color:rgb(141, 22, 22);
+    color:white;
+    font-size:large;
+    font-weight:bold;
+    padding : 1em 1em 1em 1em;
+    cursor: pointer;
+    border:none;
+    height:fit-content;
+
+}
+
+

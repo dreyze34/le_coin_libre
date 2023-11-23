@@ -4,18 +4,23 @@
 
 
 {% block content %}
-  <h2>Register</h2>
-  <form method="post" action="{% url 'auth' %}">
-    {% csrf_token %}
-    <p>Adresse Email</p>
-    {{form.username}}
-    <br>
-    <p>Mot de passe</p>
-    {{form.password1}}
-    <br>
-    <p>Entrez votre mot de passe à nouveau</p>
-    {{form.password2}}
-    <button type="submit">Register</button>
-  </form>
+<form class="formulaire_connexion" method="post" action="{% url 'auth' %}">
+  <h2><CENTER>S'inscrire</CENTER></h2>
+  {% csrf_token %}
+  <div class="email_connexion">
+    <label class="titre_cellule" for="{{ form.username.id_for_label }}">Entrez votre adresse Email:</label>
+    {{ form.username }}
+  </div>
+  <div class="password_connexion">
+    <label class="titre_cellule" for="{{ form.password.id_for_label }}">Entrez votre mot de passe:</label>
+    {{ form.password1 }}
+  </div>
+  <div class="password_connexion">
+    <label class="titre_cellule" for="{{ form.password.id_for_label }}">Entrez à nouveau votre mot de passe:</label>
+    {{ form.password2 }}
+  </div>
+  <button class="Connexion" type="submit">S'inscrire</button>
+  <a class="Connexion" href="{% url 'connect' %}"><CENTER>Déjà Membre</CENTER></a>
+</form>
 {% endblock %}
 {%include 'store/footer.html'%}

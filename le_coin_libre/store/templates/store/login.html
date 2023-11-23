@@ -3,16 +3,20 @@
 {%include 'store/header.html'%}
 
 {% block content %}
-  <h2>Login</h2>
-  <form method="post" action="{% url 'connect' %}">
+  
+  <form class="formulaire_connexion" method="post" action="{% url 'connect' %}">
+    <h2><CENTER>Se connecter</CENTER></h2>
     {% csrf_token %}
-    <p>Adresse Email</p>
-    {{form.username}}
-    <br>
-    <p>Mot de passe</p>
-    {{form.password}}
-    <br>
-    <button type="submit">Login</button>
+    <div class="email_connexion">
+      <label class="titre_cellule" for="{{ form.username.id_for_label }}">Adresse Email:</label>
+      {{ form.username }}
+    </div>
+    <div class="password_connexion">
+      <label class="titre_cellule" for="{{ form.password.id_for_label }}">Mot de passe:</label>
+      {{ form.password }}
+    </div>
+    <button class="Connexion" type="submit">Login</button>
+    <a class="Connexion" href="{% url 'auth' %}"><CENTER>Register</CENTER></a>
   </form>
 {% endblock %}
 

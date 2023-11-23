@@ -41,7 +41,8 @@ def index(request):
             'id':unreserved_products[i].id,}
             for i in range(len(unreserved_products))
         ]
-        
+        print(unreserved_products[0].date) 
+        print(unreserved_products[0].date.strftime("%A %d %B %Y à %H:%M").lower())
         context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
     else :
