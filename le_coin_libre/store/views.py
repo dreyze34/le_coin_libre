@@ -12,7 +12,6 @@ import hashlib
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 import locale
-from datetime import datetime
 
 def decomposer_nom_prenom(email):
     nom, prenom = email.split('.', 1)
@@ -34,14 +33,14 @@ def index(request):
             'prix':unreserved_products[i].price, 
             'description':unreserved_products[i].description,
             'user':unreserved_products[i].user.username,
-            'date':unreserved_products[i].date.strftime("%A %d %B %Y à %H:%M").lower(), 
+            'date':unreserved_products[i].date.strftime("%A %d %B %Y").lower()+" à "+unreserved_products[i].date.strftime("%H:%M").lower(),
             'image': [
                 unreserved_products[i].image_set.all()[j].image for j in range(len(unreserved_products[i].image_set.all()))
             ],
             'id':unreserved_products[i].id,}
             for i in range(len(unreserved_products))
         ]
-        
+        type(unreserved_products[0].date)
         context = {'liste_produit': liste_produit, 'liste_categories': liste_categories}
         return render(request, 'store/index.html', context)
     else :
@@ -49,13 +48,14 @@ def index(request):
         return render(request, 'store/index.html', context)
 
 def produit(request, id):
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/produit.html')
     product = Product.objects.get(id=id)
         
     Product_data = {
         'nom':product.title,
         'prix':product.price,
-        'date':product.date.strftime("%A %d %B %Y à %H:%M").lower(), 
+        'date':product.date.strftime("%A %d %B %Y").lower()+" à "+product.date.strftime("%H:%M").lower(), 
         'description':product.description,
         'id':product.id,
         'user':product.user.username,
@@ -72,8 +72,8 @@ def order_product(request):
         product = Product.objects.get(id=product_id)
         reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
 
-        if User.is_authenticated() and product not in reserved_products :
-            order = Order.objects.create(product=product, buyer=request)
+        if User.is_authenticated and product not in reserved_products :
+            order = Order.objects.create(product=product, buyer=request.user)
             order.save()
         
         return redirect('index')
@@ -146,6 +146,7 @@ def add_product(request):
     return render(request, 'store/add_produit.html', {'form': form})
 
 def search(request):
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     template = loader.get_template('store/recherche.html')
     search = unidecode(request.GET.get('search')).lower()
     catégorie = request.GET.get('Catégorie')
@@ -157,8 +158,8 @@ def search(request):
         {'nom':resultat[i].title,
          'prix':resultat[i].price,
          'description':resultat[i].description,
-         'user':resultat[i].user.user.username,
-         'date':resultat[i].date,
+         'user':resultat[i].user.username,
+         'date':resultat[i].date.strftime("%A %d %B %Y").lower()+" à "+resultat[i].date.strftime("%H:%M").lower(),
          'image': resultat[i].image_set.all()[0].image,
          'id':resultat[i].id}
         for i in range(len(resultat))
@@ -171,8 +172,8 @@ def search(request):
         {'nom':resultat[i].title,
          'prix':resultat[i].price,
          'description':resultat[i].description,
-         'user':resultat[i].user.user.username,
-         'date':resultat[i].date,
+         'user':resultat[i].user.username,
+         'date':resultat[i].date.strftime("%A %d %B %Y").lower()+" à "+resultat[i].date.strftime("%H:%M").lower(),
          'image': resultat[i].image_set.all()[0].image,
          'id':resultat[i].id}
         for i in range(len(resultat))
@@ -224,25 +225,32 @@ def a_propos(request):
 
 
 def user_profile(request):
+    locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
     reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
     username= request.GET.get("query", "")
     user = User.objects.filter(username=username)[0]
     userp_products = Product.objects.filter(user=user)
-    liste_produits = [
-            {'nom':userp_products[i].title, 
-            'prix':userp_products[i].price, 
-            'description':userp_products[i].description,
-            'user':decomposer_nom_prenom(userp_products[i].user.username),
-            'user_mail':userp_products[i].user.username,
-            'date':userp_products[i].date.strftime("%A %d %B %Y à %H:%M").lower(), 
+    user_reserved_products, unreserved_products = [], []
+    for i in range(len(userp_products)):
+        product_data = {
+            'title': userp_products[i].title, 
+            'price': userp_products[i].price, 
+            'description': userp_products[i].description,
+            'user': decomposer_nom_prenom(userp_products[i].user.username),
+            'user_mail': userp_products[i].user.username,
+            'date': userp_products[i].date.strftime("%A %d %B %Y").lower()+" à "+userp_products[i].date.strftime("%H:%M").lower(), 
             'image': [
-                userp_products[i].image_set.all()[j].image for j in range(len(userp_products[i].image_set.all()))
+            userp_products[i].image_set.all()[j].image for j in range(len(userp_products[i].image_set.all()))
             ],
-            'id':userp_products[i].id,}
-            for i in range(len(userp_products))
-        ]
-    images = Image.objects.filter(product__in=userp_products)
-    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'products': liste_produits, 'images': images}
+            'id': userp_products[i].id,
+            }
+        if userp_products[i] in reserved_products :
+            user_reserved_products.append(product_data)
+        else :
+            unreserved_products.append(product_data)
+    
+    
+    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'reserved_products': user_reserved_products, 'unreserved_products' : unreserved_products}
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
 
