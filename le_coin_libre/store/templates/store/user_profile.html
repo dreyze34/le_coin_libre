@@ -18,17 +18,17 @@
     <!-- Produits de l'utilisateur -->
     <div>
       <CENTER><h2>Vos produits en vente </h2></CENTER>
-      {% if products %}
-          {% for produit in products %}
+      {% if unreserved_products %}
+        {% for produit in unreserved_products %}
           <div class="bloc_produit">
             <div class="photo_produit">
                 <img src='../static/images/{{produit.id}}/image1.jpg'>
             </div>
             <div class="description_produit">
                 <a href='/produit/{{produit.id}}'>
-                    <h1>{{ produit.nom }}</h1>
+                    <h1>{{produit.title}}</h1>
                 </a>
-                <h2 class="prix">{{ produit.prix }} €</h2>
+                <h2 class="prix">{{ produit.price }} €</h2>
                 <div class="bloc_bas_produit_profil">
                   <div class="bloc_date_profil">
                     <p>Annonce publiée par</p>
@@ -43,9 +43,9 @@
             </div>
         </div>
         {% endfor %}
-    {% else %}
-      <p>Vous n'avez actuellement aucun produit en vente.</p>
-    {% endif %}
+      {% else %}
+        <p>Vous n'avez actuellement aucun produit en vente.</p>
+      {% endif %}
   </div>
   <div>
     <CENTER><h3>Vos produits réservés</h3></CENTER>
@@ -53,20 +53,20 @@
         {% for product in reserved_products %}
           <div class="bloc_produit">
             <div class="photo_produit">
-                <img src='../static/images/{{produit.id}}/image1.jpg'>
+                <img src='../static/images/{{product.id}}/image1.jpg'>
             </div>
             <div class="description_produit">
-                <a href='/produit/{{produit.id}}'>
-                    <h1>{{ produit.nom }}</h1>
+                <a href='/produit/{{product.id}}'>
+                    <h1>{{ product.title }}</h1>
                 </a>
-                <h2 class="prix">{{ produit.prix }} €</h2>
+                <h2 class="prix">{{ product.price}} €</h2>
                 <div class="bloc_bas_produit_profil">
                   <div class="bloc_date_profil">
                     <p>Annonce publiée par</p>
-                    <a href= '/user_profile/?query={{produit.user_mail}}'><p class="user"> {{produit.user}} </p></a>
-                    <p class="date">le {{produit.date}}</p>
+                    <a href= '/user_profile/?query={{product.user_mail}}'><p class="user"> {{product.user}} </p></a>
+                    <p class="date">le {{product.date}}</p>
                   </div>
-                  <a class="supprimer" href="{% url 'delete_product' produit.id %}" onclick="return ConfirmDelete()">Supprimer</a>         
+                  <a class="supprimer" href="{% url 'delete_product' product.id %}" onclick="return ConfirmDelete()">Supprimer</a>         
                     </a>
                 </div>
                 
@@ -89,13 +89,13 @@
 
 {% else %}
 
-  <CENTER><h2>Bienvenue sur la page utilisateur de {{user.user.username}} !</h2></CENTER>
+  <CENTER><h2>Bienvenue sur la page utilisateur de {{username}} !</h2></CENTER>
   <div class="bloc_produit">
     <!-- Informations utilisateur -->
     <div>
       <h3>Informations utilisateur :</h3>
-      <p>Nom d'utilisateur : {{user.user.username}}</p>
-      <p>Email : {{user.user.email}}</p>
+      <p>Nom d'utilisateur : {{username}}</p>
+      <p>Email : {{email}}</p>
     </div>
   </div>
     <!-- Produits de l'utilisateur -->
