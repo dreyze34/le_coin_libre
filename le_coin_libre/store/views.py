@@ -12,7 +12,6 @@ import hashlib
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.http import HttpResponse, JsonResponse
-
 #hahsage sha-256 de la conversation: 
 def hachage(name):
    name= name.encode('utf-8')
@@ -218,10 +217,16 @@ def auth(request):
     form= UserCreationForm()
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        email = form.data['username']
         if form.is_valid():
-            user = form.save()
-            login(request, user)
-            return redirect('index')
+            domaines_autorises = ['student-cs.fr', 'centralesupelec.fr']
+            test_mail = email.split('@')[1].lower() in domaines_autorises
+            if test_mail:
+                user = form.save()
+                login(request, user)
+                return redirect('index')
+            else : 
+                messages.error(request, "Veuillez entrer une adresse e-mail Centrale Supélec valide")
     return render(request, 'store/register.html', {'form': form})
     
     
@@ -253,36 +258,46 @@ def a_propos(request):
 # Retourne les informations de la page profil d'un utilisateur
 def user_profile(request):
     locale.setlocale(locale.LC_TIME, 'fr_FR.UTF-8')
+    list_products = Product.objects.all()
     reserved_products = [Order.objects.all()[i].product for i in range(len(Order.objects.all()))]
     username= request.GET.get("query", "")
     user = User.objects.filter(username=username)[0]
     userp_products = Product.objects.filter(user=user)
-    user_reserved_products, unreserved_products = [], []
-    for i in range(len(userp_products)):
-        product_data = {
-            'title': userp_products[i].title, 
-            'price': userp_products[i].price, 
-            'description': userp_products[i].description,
-            'user': decomposer_nom_prenom(userp_products[i].user.username),
-            'user_mail': userp_products[i].user.username,
-            'date': userp_products[i].date.strftime("%A %d %B %Y").lower()+" à "+userp_products[i].date.strftime("%H:%M").lower(), 
-            'image': [
-            userp_products[i].image_set.all()[j].image for j in range(len(userp_products[i].image_set.all()))
-            ],
-            'id': userp_products[i].id,
-            }
-        if userp_products[i] in reserved_products :
-            product_data['buyer'] = decomposer_nom_prenom(Order.objects.filter(product=userp_products[i])[0].buyer.username)
-            product_data['buyer_mail'] = Order.objects.filter(product=userp_products[i])[0].buyer.username
-            user_reserved_products.append(product_data)
+    print(userp_products)
+    print(list_products)
+    user_reserved_products, unreserved_products, reservations = [], [], []
+    for i in range(len(list_products)):
+        if list_products[i] in userp_products :
+            product_data = {
+                'title': list_products[i].title, 
+                'price': list_products[i].price, 
+                'description': list_products[i].description,
+                'user': decomposer_nom_prenom(list_products[i].user.username),
+                'user_mail': list_products[i].user.username,
+                'date': list_products[i].date.strftime("%A %d %B %Y").lower()+" à "+list_products[i].date.strftime("%H:%M").lower(), 
+                'image': [
+                list_products[i].image_set.all()[j].image for j in range(len(list_products[i].image_set.all()))
+                ],
+                'id': list_products[i].id,
+                }
 
+            if list_products[i] in reserved_products :
+                product_data['buyer'] = decomposer_nom_prenom(Order.objects.filter(product=list_products[i])[0].buyer.username)
+                product_data['buyer_mail'] = Order.objects.filter(product=list_products[i])[0].buyer.username
+                user_reserved_products.append(product_data)
+
+            else :
+                unreserved_products.append(product_data)
         else :
-            unreserved_products.append(product_data)
+            if list_products[i] in reserved_products and list_products[i].order_set.all()[0].buyer == user :
+                reservations.append(list_products[i])
     
-    
-    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'reserved_products': user_reserved_products, 'unreserved_products' : unreserved_products}
+    context = {'username': decomposer_nom_prenom(user.username), 'email':user.username, 'reserved_products': user_reserved_products, 'unreserved_products' : unreserved_products, 'reservations' : reservations}
     template = loader.get_template('store/user_profile.html')
     return render(request, 'store/user_profile.html', context)
+
+
+
 
 
 
@@ -301,8 +316,12 @@ def delete_product(request, produit_id):
             
 #fonctions associés au chat
 def home(request):
-    liste_room = [User.objects.get(id=user['buyer']) for user in Order.objects.values('buyer').distinct()]
-
+    print(request.user)
+    liste_produit_vendu = [product for product in Product.objects.filter(user=request.user.id)]
+    liste_produit_vendu_reserve= [product.buyer.username for product in Order.objects.filter(product__in=liste_produit_vendu)]
+    liste_produit_reserve=[product.product for product in Order.objects.filter(buyer=request.user.id)]
+    liste_produit = liste_produit_reserve + liste_produit_vendu_reserve
+    liste_room = [produit.user.username for produit in liste_produit_reserve]+liste_produit_vendu_reserve 
     context = {'liste_room' : liste_room,}
     return render(request, 'store/home.html',context)
 

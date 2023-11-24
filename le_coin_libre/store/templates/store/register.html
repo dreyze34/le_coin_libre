@@ -6,9 +6,14 @@
 {% block content %}
 <form class="formulaire_connexion" method="post" action="{% url 'auth' %}">
   <h2><CENTER>S'inscrire</CENTER></h2>
+  {% if messages %}
+    {%for message in messages%}
+    <h3><center>{{ message}}</center></h3>
+    {%endfor%}
+  {% endif %}
   {% csrf_token %}
   <div class="email_connexion">
-    <label class="titre_cellule" for="{{ form.username.id_for_label }}">Entrez votre adresse Email:</label>
+    <label class="titre_cellule" for="{{ form.username.id_for_label }}">Entrez votre adresse Email CS : </label>
     {{ form.username }}
   </div>
   <div class="password_connexion">

@@ -45,9 +45,10 @@ nav {
     display: grid;
     font-family: 'Vina Sans', sans-serif;
     flex-wrap: wrap;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
     align-items: center;
-    width: 100%
+    width: 100%;
+    height:fit-content;
 }
 
 .bouton_accueil a {
@@ -320,6 +321,16 @@ footer{
     gap:3px;
     margin-top: auto;
 }
+
+.message_user{
+    background-color: rgba(255, 255, 255, 0.9);
+    color:black;
+    font-size:large;
+    font-weight:bold;
+    padding : 1em 1em 1em 1em;
+    cursor: pointer;
+    border:none;
+}
 /*Page à propos*/
 
 
@@ -350,13 +361,13 @@ footer{
 }
 
 .linkedin-image {
-    transition: opacity 0.3s ease-in-out; /* Effet de transition sur l'opacité */
+    transition: opacity 0.3s ease-in-out; 
 }
 
 .linkedin-image:hover {
-    opacity: 0.6; /* Opacité légèrement réduite au survol */
-}
+    opacity: 0.6;
 
+}
 /*Ajouter un produit*/
 
 .formulaire_ajout_produit{
@@ -535,7 +546,7 @@ footer{
     margin : 2em 15em 25em 15em;
     padding: 2em;
     box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.2);
-    height:20em;
+    height:fit-content;
 }
 
 .rechercher_message{
@@ -551,5 +562,3 @@ footer{
 
 }
 /* ajouter les media query pour les écrans plus petits */
-
-
