@@ -95,6 +95,7 @@ def produit(request, id):
         'description':product.description,
         'id':product.id,
         'user':product.user.username,
+        'username': decomposer_nom_prenom(product.user.username),
         'image': [product.image_set.all()[i].image for i in range(len(product.image_set.all()))],
         'nb_image':len([product.image_set.all()[i].image for i in range(len(product.image_set.all()))])
         }

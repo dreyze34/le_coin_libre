@@ -12,7 +12,12 @@
     <div class="description_produit_seul">
         <h1 class="titre_seul"> {{ Product.nom }} </h1>
         <h2 class="prix_seul"> {{ Product.prix }} € </h2>
-        <p class="date_seul">{{Product.date}}</p>
+        <div class="bloc_date_profil">
+            <p>Annonce publiée par</p>
+            <a href= '/user_profile/?query={{Product.user}}'><p class="user"> {{Product.username}} </p></a>
+            <!-- <p class="description">{{ produit.description }}</p>-->
+            <p class="date">le {{Product.date}}</p>
+        </div>
         <div class="barre"></div>
         <h2 class="titre_description">Description </h2>
         <div class="descripiton_reservation">
